@@ -1,0 +1,4 @@
+baza.xlsx
+/settlers-guide-client/node_modules
+/settlers-guide-server/node_modules
+/settlers-guide-server/.env
