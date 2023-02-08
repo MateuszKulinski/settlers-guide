@@ -1,21 +1,74 @@
-// import connectRedis from "connect-redis";
-// import Redis from "ioredis";
-import express from "express";
-// import session from "express-session";
-import { createServer } from "http";
 import AppDataSource from "./DataSource";
+import { ApolloServer } from "@apollo/server";
+import bodyParser from "body-parser";
+import connectRedis from "connect-redis";
+import cors from "cors";
+import express, { json } from "express";
+import { expressMiddleware } from "@apollo/server/express4";
+import Redis from "ioredis";
+import resolvers from "./graphql/resolvers";
+import session from "express-session";
+import typeDefs from "./graphql/typeDefs";
 
 require("dotenv").config();
 
 const main = async () => {
     const app = express();
-    const server = await createServer(app);
     const _PORT_ = process.env.APP_PORT;
+    const _SERVER_URL_ = String(process.env.SERVER_URL);
+    const router = express.Router();
+
+    const redis = new Redis({
+        port: Number(process.env.REDIS_PORT),
+        host: process.env.REDIS_HOST,
+        password: process.env.REDIS_PASSWORD,
+    });
+    const RedisStore = connectRedis(session);
+    const redisStore = new RedisStore({
+        client: redis,
+    });
+
+    const apolloServer = new ApolloServer({
+        typeDefs,
+        resolvers,
+    });
 
     await AppDataSource.initialize();
+    await apolloServer.start();
 
-    server.listen({ port: _PORT_ }, () => {
-        console.log("Server working...");
+    app.use(
+        session({
+            store: redisStore,
+            name: process.env.COOKIE_NAME,
+            sameSite: "Strict",
+            secret: String(process.env.SESSION_SECRET),
+            resave: false,
+            saveUninitialized: false,
+            cookie: {
+                httpOnly: true,
+                secure: false,
+                maxAge: 1000 * 60 * 60 * 24,
+            },
+        } as any)
+    );
+    app.use(bodyParser.json());
+    app.use(router);
+    app.use(
+        _SERVER_URL_,
+        cors<cors.CorsRequest>({
+            credentials: true,
+            origin: process.env.CLIENT_URL,
+        }),
+        json(),
+        expressMiddleware(apolloServer, {
+            context: async ({ req, res }: any) => ({ req, res }),
+        })
+    );
+
+    app.listen({ port: _PORT_ }, () => {
+        console.log(
+            `Server ready  at http://localhost:${_PORT_}${_SERVER_URL_}`
+        );
     });
 };
 

@@ -1,4 +1,4 @@
-import { Auditable } from "./Auditable";
+import { Auditable } from "../models/Auditable";
 import { Length } from "class-validator";
 import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 
