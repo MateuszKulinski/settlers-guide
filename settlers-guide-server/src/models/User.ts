@@ -1,6 +1,8 @@
 import { Auditable } from "../models/Auditable";
 import { Length } from "class-validator";
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { General } from "./General";
+import { Guide } from "./Guide";
 
 @Entity({ name: "User" })
 export class User extends Auditable {
@@ -25,4 +27,10 @@ export class User extends Auditable {
     })
     @Length(8, 100)
     password!: string;
+
+    @OneToMany(() => General, (general) => general.user)
+    generals: General;
+
+    @OneToMany(() => Guide, (guide) => guide.user)
+    guides: Guide;
 }
