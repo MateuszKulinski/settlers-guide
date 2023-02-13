@@ -6,12 +6,12 @@ export class Auditable extends BaseEntity {
         default: () => `now()`,
         nullable: false,
     })
-    createdOn!: Date;
+    createdOn: Date;
 
     @Column("timestamp", {
         name: "LastModifiedOn",
         default: () => `now()`,
         nullable: false,
     })
-    LastModifiedOn!: Date;
+    LastModifiedOn: Date;
 }

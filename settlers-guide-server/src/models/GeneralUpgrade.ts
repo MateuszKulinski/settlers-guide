@@ -14,13 +14,13 @@ export class GeneralUpgrade extends BaseEntity {
         name: "Id",
         type: "bigint",
     })
-    id!: string;
+    id: string;
 
     @Column("smallint", {
-        name: "level",
+        name: "Level",
         nullable: false,
     })
-    level!: number;
+    level: number;
 
     @ManyToOne(
         () => GeneralUpgradeType,

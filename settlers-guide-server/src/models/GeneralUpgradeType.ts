@@ -13,14 +13,14 @@ export class GeneralUpgradeType extends BaseEntity {
         name: "Id",
         type: "bigint",
     })
-    id!: string;
+    id: string;
 
     @Column("varchar", {
-        name: "name",
+        name: "Name",
         length: 30,
         nullable: false,
     })
-    name!: string;
+    name: string;
 
     @OneToMany(
         () => GeneralUpgrade,

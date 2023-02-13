@@ -6,12 +6,12 @@ export class Unit extends BaseEntity {
         name: "Id",
         type: "bigint",
     })
-    id!: string;
+    id: string;
 
     @Column("varchar", {
         name: "Name",
         length: 30,
         nullable: false,
     })
-    name!: string;
+    name: string;
 }

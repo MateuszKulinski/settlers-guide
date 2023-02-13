@@ -12,6 +12,12 @@ import typeDefs from "./graphql/typeDefs";
 
 require("dotenv").config();
 
+declare module "express-session" {
+    interface SessionData {
+        user: { [key: string]: any };
+    }
+}
+
 const main = async () => {
     const app = express();
     const _PORT_ = process.env.APP_PORT;
@@ -43,10 +49,10 @@ const main = async () => {
             sameSite: "Strict",
             secret: String(process.env.SESSION_SECRET),
             resave: false,
-            saveUninitialized: false,
+            saveUninitialized: true,
             cookie: {
                 httpOnly: true,
-                secure: false,
+                secure: true,
                 maxAge: 1000 * 60 * 60 * 24,
             },
         } as any)

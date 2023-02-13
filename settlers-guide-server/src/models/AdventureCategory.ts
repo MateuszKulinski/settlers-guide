@@ -13,15 +13,15 @@ export class AdventureCategory extends BaseEntity {
         name: "Id",
         type: "bigint",
     })
-    id!: string;
+    id: string;
 
     @Column("varchar", {
         name: "Name",
         length: 50,
         nullable: false,
     })
-    name!: string;
+    name: string;
 
     @OneToMany(() => Adventure, (adventure) => adventure.adventuresCategory)
-    adventures!: Adventure;
+    adventures: Adventure;
 }

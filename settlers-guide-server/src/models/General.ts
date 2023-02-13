@@ -16,7 +16,7 @@ export class General extends BaseEntity {
         name: "Id",
         type: "bigint",
     })
-    id!: string;
+    id: string;
 
     @Column("varchar", {
         name: "Name",
@@ -26,10 +26,10 @@ export class General extends BaseEntity {
     name: string;
 
     @ManyToOne(() => GeneralType, (generalType) => generalType.general)
-    generalType!: GeneralType;
+    generalType: GeneralType;
 
     @ManyToOne(() => User, (user) => user.generals)
-    user!: User;
+    user: User;
 
     @OneToMany(() => GeneralUpgrade, (generalUpgrade) => generalUpgrade.general)
     upgrades: GeneralUpgrade;

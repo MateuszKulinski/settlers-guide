@@ -36,6 +36,9 @@ const typeDefs = `#graphql
     getAdventureCategories: [AdventureCategoryResult!]
   }
   
+  type Mutation {
+    register(email: String!, password: String!): String!
+  }
 `;
 
 export default typeDefs;

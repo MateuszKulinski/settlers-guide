@@ -3,6 +3,7 @@ import { Length } from "class-validator";
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 import { General } from "./General";
 import { Guide } from "./Guide";
+import { GuidePoints } from "./GuidePoints";
 
 @Entity({ name: "User" })
 export class User extends Auditable {
@@ -10,7 +11,7 @@ export class User extends Auditable {
         name: "Id",
         type: "bigint",
     })
-    id!: string;
+    id: string;
 
     @Column("varchar", {
         name: "Email",
@@ -18,7 +19,7 @@ export class User extends Auditable {
         unique: true,
         nullable: false,
     })
-    email!: string;
+    email: string;
 
     @Column("varchar", {
         name: "Password",
@@ -26,11 +27,14 @@ export class User extends Auditable {
         nullable: false,
     })
     @Length(8, 100)
-    password!: string;
+    password: string;
 
     @OneToMany(() => General, (general) => general.user)
     generals: General;
 
     @OneToMany(() => Guide, (guide) => guide.user)
     guides: Guide;
+
+    @OneToMany(() => GuidePoints, (guidePoints) => guidePoints.user)
+    guidePoints: GuidePoints[];
 }

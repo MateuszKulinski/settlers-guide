@@ -13,18 +13,18 @@ export class Adventure extends BaseEntity {
         name: "Id",
         type: "bigint",
     })
-    id!: string;
+    id: string;
 
     @Column("varchar", {
         name: "Name",
         length: 50,
         nullable: false,
     })
-    name!: string;
+    name: string;
 
     @ManyToOne(
         () => AdventureCategory,
         (adventureCategory) => adventureCategory.adventures
     )
-    adventuresCategory!: AdventureCategory;
+    adventuresCategory: AdventureCategory;
 }

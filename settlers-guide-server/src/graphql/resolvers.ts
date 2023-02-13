@@ -4,6 +4,7 @@ import {
     getAdventureCategories,
     getAdventureCategoryById,
 } from "../repo/AdventureCategoryRepo";
+import { login, logout, register, UserResult } from "../repo/UserRepo";
 import { GqlContext } from "./GqlContext";
 import { QueryArrayResult, QueryOneResult } from "./QueryArrayResult";
 
@@ -112,6 +113,71 @@ const resolvers: IResolvers = {
         //         throw error;
         //     }
         // },
+    },
+    Mutation: {
+        register: async (
+            obj: any,
+            args: { email: string; password: string },
+            ctx: GqlContext,
+            info: any
+        ): Promise<string> => {
+            let user: UserResult;
+            try {
+                user = await register(args.email, args.password);
+                if (user && user.user) {
+                    return "Zarejestrowano użytkownika";
+                }
+                return user && user.messages
+                    ? user.messages[0]
+                    : _STANDARD_ERROR_;
+            } catch (error) {
+                throw error;
+            }
+        },
+        login: async (
+            obj: any,
+            args: { email: string; password: string },
+            ctx: GqlContext,
+            info: any
+        ): Promise<string> => {
+            let user: UserResult;
+            try {
+                user = await login(args.email, args.password);
+                if (user && user.user) {
+                    ctx.req.session!.user || (ctx.req.session!.user = {});
+                    ctx.req.session.user.id = user.user.id;
+                    return `Login successful for userId ${
+                        ctx.req.session!.user.id
+                    }.`;
+                }
+                return user && user.messages
+                    ? user.messages[0]
+                    : _STANDARD_ERROR_;
+            } catch (ex) {
+                console.log(ex.message);
+                throw ex;
+            }
+        },
+        logout: async (
+            obj: any,
+            args: { email: string },
+            ctx: GqlContext,
+            info: any
+        ): Promise<string> => {
+            try {
+                let result = await logout(args.email);
+                ctx.req.session?.destroy((err: any) => {
+                    if (err) {
+                        console.log("destroy session failed");
+                        return;
+                    }
+                    console.log("session destroyed", ctx.req.session?.user?.id);
+                });
+                return result;
+            } catch (ex) {
+                throw ex;
+            }
+        },
     },
 };
 
