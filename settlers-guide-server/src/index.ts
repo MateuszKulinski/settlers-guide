@@ -13,7 +13,7 @@ import typeDefs from "./graphql/typeDefs";
 require("dotenv").config();
 
 declare module "express-session" {
-    interface SessionData {
+    export interface SessionData {
         user: { [key: string]: any };
     }
 }

@@ -25,7 +25,11 @@ export const getAdventureCategoryById = async (
 export const getAdventureCategories = async (): Promise<
     QueryArrayResult<AdventureCategory>
 > => {
-    const adventureCategories = await AdventureCategory.find();
+    const adventureCategories = await AdventureCategory.createQueryBuilder(
+        "adventureCategory"
+    )
+        .leftJoinAndSelect("adventureCategory.adventures", "adventure")
+        .getMany();
     if (!adventureCategories || adventureCategories.length == 0) {
         return {
             messages: ["Nie znaleziono kategorii"],

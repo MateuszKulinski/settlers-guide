@@ -4,7 +4,13 @@ import {
     getAdventureCategories,
     getAdventureCategoryById,
 } from "../repo/AdventureCategoryRepo";
-import { login, logout, register, UserResult } from "../repo/UserRepo";
+import {
+    changePassword,
+    login,
+    logout,
+    register,
+    UserResult,
+} from "../repo/UserRepo";
 import { GqlContext } from "./GqlContext";
 import { QueryArrayResult, QueryOneResult } from "./QueryArrayResult";
 
@@ -13,6 +19,13 @@ const _STANDARD_ERROR_ = "An error has occurred";
 interface EntityResult {
     messages: Array<string>;
 }
+
+const isUserExist = (ctx: GqlContext): boolean => {
+    if (!ctx.req.session || !ctx.req.session.user?.id) {
+        return false;
+    }
+    return true;
+};
 
 const resolvers: IResolvers = {
     AdventureResult: {
@@ -43,6 +56,7 @@ const resolvers: IResolvers = {
         },
     },
     Query: {
+        //query categories start
         getAdventureCategory: async (
             obj: any,
             args: { id: string },
@@ -86,35 +100,79 @@ const resolvers: IResolvers = {
                 throw error;
             }
         },
-
-        // me: async (
-        //     obj: any,
-        //     args: null,
-        //     ctx: GqlContext,
-        //     info: any
-        // ): Promise<User | EntityResult> => {
-        //     let user: UserResult;
-        //     try {
-        //         if (!ctx.req.session?.userId) {
-        //             return {
-        //                 messages: ["User not logged in"],
-        //             };
-        //         }
-        //         user = await me(ctx.req.session.userId);
-        //         if (user && user.user) {
-        //             return user.user;
-        //         }
-        //         return {
-        //             messages: user.messages
-        //                 ? user.messages
-        //                 : [_STANDARD_ERROR_],
-        //         };
-        //     } catch (error) {
-        //         throw error;
-        //     }
-        // },
+        //query categories end
     },
     Mutation: {
+        //user mutation start
+        changePassword: async (
+            obj: any,
+            args: { newPassword: string; oldPassword: string },
+            ctx: GqlContext,
+            info: any
+        ): Promise<string> => {
+            try {
+                if (!isUserExist(ctx)) {
+                    ("Zaloguj się, aby zmienić hasło");
+                }
+
+                const id = ctx.req.session.user?.id;
+                let result = await changePassword(
+                    id,
+                    args.newPassword,
+                    args.oldPassword
+                );
+
+                return result;
+            } catch (error) {
+                console.log(error.message);
+                throw error;
+            }
+        },
+        login: async (
+            obj: any,
+            args: { email: string; password: string },
+            ctx: GqlContext,
+            info: any
+        ): Promise<string> => {
+            let user: UserResult;
+            try {
+                user = await login(args.email, args.password);
+                if (user && user.user) {
+                    ctx.req.session?.user || (ctx.req.session!.user = {});
+                    ctx.req.session.user.id = user.user.id;
+                    return `Zalogowano użytkownika userId ${
+                        ctx.req.session!.user.id
+                    }.`;
+                }
+                return user && user.messages
+                    ? user.messages[0]
+                    : _STANDARD_ERROR_;
+            } catch (error) {
+                console.log(error.message);
+                throw error;
+            }
+        },
+        logout: async (
+            obj: any,
+            args: { email: string },
+            ctx: GqlContext,
+            info: any
+        ): Promise<string> => {
+            try {
+                let result = await logout(args.email);
+                ctx.req.session?.destroy((err: any) => {
+                    if (err) {
+                        console.log("Problem z usunięciem sesji");
+                        return;
+                    }
+                    console.log("Sesja usunięta", ctx.req.session?.user?.id);
+                });
+                return result;
+            } catch (error) {
+                console.log(error.message);
+                throw error;
+            }
+        },
         register: async (
             obj: any,
             args: { email: string; password: string },
@@ -131,53 +189,11 @@ const resolvers: IResolvers = {
                     ? user.messages[0]
                     : _STANDARD_ERROR_;
             } catch (error) {
+                console.log(error.message);
                 throw error;
             }
         },
-        login: async (
-            obj: any,
-            args: { email: string; password: string },
-            ctx: GqlContext,
-            info: any
-        ): Promise<string> => {
-            let user: UserResult;
-            try {
-                user = await login(args.email, args.password);
-                if (user && user.user) {
-                    ctx.req.session!.user || (ctx.req.session!.user = {});
-                    ctx.req.session.user.id = user.user.id;
-                    return `Login successful for userId ${
-                        ctx.req.session!.user.id
-                    }.`;
-                }
-                return user && user.messages
-                    ? user.messages[0]
-                    : _STANDARD_ERROR_;
-            } catch (ex) {
-                console.log(ex.message);
-                throw ex;
-            }
-        },
-        logout: async (
-            obj: any,
-            args: { email: string },
-            ctx: GqlContext,
-            info: any
-        ): Promise<string> => {
-            try {
-                let result = await logout(args.email);
-                ctx.req.session?.destroy((err: any) => {
-                    if (err) {
-                        console.log("destroy session failed");
-                        return;
-                    }
-                    console.log("session destroyed", ctx.req.session?.user?.id);
-                });
-                return result;
-            } catch (ex) {
-                throw ex;
-            }
-        },
+        //mutation user end
     },
 };
 

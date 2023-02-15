@@ -4,6 +4,7 @@ import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 import { General } from "./General";
 import { Guide } from "./Guide";
 import { GuidePoints } from "./GuidePoints";
+import { FavouriteGuide } from "./FavouriteGuide";
 
 @Entity({ name: "User" })
 export class User extends Auditable {
@@ -26,6 +27,9 @@ export class User extends Auditable {
         length: 100,
         nullable: false,
     })
+    @Column("boolean", { name: "Confirmed", default: false, nullable: false })
+    confirmed: boolean;
+
     @Length(8, 100)
     password: string;
 
@@ -37,4 +41,7 @@ export class User extends Auditable {
 
     @OneToMany(() => GuidePoints, (guidePoints) => guidePoints.user)
     guidePoints: GuidePoints[];
+
+    @OneToMany(() => FavouriteGuide, (favouriteGuide) => favouriteGuide.user)
+    favouriteGuide: FavouriteGuide[];
 }

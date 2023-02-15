@@ -37,6 +37,9 @@ const typeDefs = `#graphql
   }
   
   type Mutation {
+    changePassword(newPassword: String, oldPassword: String): String!
+    login(email: String, password: String): String!
+    logout(email: String): String!
     register(email: String!, password: String!): String!
   }
 `;
