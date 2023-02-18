@@ -1,0 +1,31 @@
+.container-main .col-lg-9 > *,
+.container-main .col-md-9 > *,
+.container-main .col-sm-9 > *,
+.container-main .col-xs-9 > *,
+.container-main .col-lg-3 > *,
+.container-main .col-md-3 > *,
+.container-main .col-sm-3 > *,
+.container-main .col-xs-3 > * {
+    background-color: var(--bg-column);
+    min-height: 300px;
+}
+
+.bg-gold {
+    background-color: var(--gold) !important;
+}
+
+.color-light-gold {
+    color: var(--gold-light) !important;
+}
+
+button.color-light-gold:hover,
+a.color-light-gold:hover {
+    color: var(--gold-light-hover) !important;
+}
+
+@media (max-width: 767px) {
+    .container-main > .row {
+        flex-direction: column-reverse;
+        gap: 20px;
+    }
+}
