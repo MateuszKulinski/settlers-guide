@@ -1,5 +1,5 @@
-import { QueryArrayResult, QueryOneResult } from "../graphql/QueryArrayResult";
 import { AdventureCategory } from "../models/AdventureCategory";
+import { QueryArrayResult, QueryOneResult } from "../graphql/QueryArrayResult";
 
 export const getAdventureCategoryById = async (
     id: string

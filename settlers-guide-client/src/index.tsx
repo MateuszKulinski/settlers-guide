@@ -1,14 +1,33 @@
+import { ApolloClient, InMemoryCache } from "@apollo/client/core";
+import { ApolloProvider } from "@apollo/client/react";
+import { BrowserRouter } from "react-router-dom";
+import { Provider } from "react-redux";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import App from "./App";
+import configureStore from "./store/configureStore";
+
+const client = new ApolloClient({
+    uri: "http://localhost:5000/settlersGuideServer",
+    credentials: "include",
+    cache: new InMemoryCache({
+        resultCaching: false,
+    }),
+});
 
 const root = ReactDOM.createRoot(
     document.getElementById("root") as HTMLElement
 );
 root.render(
     <React.StrictMode>
-        <App />
+        <Provider store={configureStore()}>
+            <BrowserRouter>
+                <ApolloProvider client={client}>
+                    <App />
+                </ApolloProvider>
+            </BrowserRouter>
+        </Provider>
     </React.StrictMode>
 );
 

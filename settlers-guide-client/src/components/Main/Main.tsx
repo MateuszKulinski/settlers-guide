@@ -1,8 +1,8 @@
+import { Col, Container, Row } from "react-bootstrap";
 import React from "react";
 import "./Main.css";
-import { Container, Row, Col } from "react-bootstrap";
 
-const Main = () => {
+const Main: React.FC = () => {
     return (
         <>
             <Container className="container-main" fluid="md">

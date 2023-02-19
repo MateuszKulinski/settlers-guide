@@ -1,13 +1,14 @@
-import { User } from "../models/User";
 import bcrypt from "bcryptjs";
-import { isPasswordValid } from "../cammon/validators/PasswordValidator";
 import * as EmailValidator from "email-validator";
+
+import { User } from "../models/User";
+import { isPasswordValid } from "../cammon/validators/PasswordValidator";
 
 const _SALT_ROUNDS_ = 10;
 const _USER_ERROR_CONFIRMATION_ =
     "Użykownik nie potwierdził swojego adresu e-mail.";
-const _USER_ERROR_NOT_FOUND_ = "Użytkownik nie został znaleziony.";
 const _USER_ERROR_INCORRECT_PASSWORD_ = "Hasło jest nieprawidłowe.";
+const _USER_ERROR_NOT_FOUND_ = "Użytkownik nie został znaleziony.";
 export class UserResult {
     constructor(public messages?: Array<string>, public user?: User) {}
 }

@@ -1,6 +1,6 @@
-import { Auditable } from "../models/Auditable";
-import { Length } from "class-validator";
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { Length } from "class-validator";
+import { Auditable } from "./Auditable";
 import { General } from "./General";
 import { Guide } from "./Guide";
 import { GuidePoints } from "./GuidePoints";

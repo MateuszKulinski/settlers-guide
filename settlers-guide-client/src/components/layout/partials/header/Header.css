@@ -1,0 +1,18 @@
+.modal-menu {
+    max-width: 1000px;
+    min-width: 300px;
+    margin: auto;
+    background: var(--bg-column);
+    padding: 20px;
+    border-radius: 20px;
+    color: #fff;
+    margin-top: 20px;
+}
+
+.ReactModalPortal {
+    z-index: 1300;
+    position: fixed;
+}
+.invalid-feedback {
+    display: block;
+}

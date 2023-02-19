@@ -1,14 +1,14 @@
-import AppDataSource from "./DataSource";
-import { ApolloServer } from "@apollo/server";
-import bodyParser from "body-parser";
-import connectRedis from "connect-redis";
-import cors from "cors";
 import express, { json } from "express";
-import { expressMiddleware } from "@apollo/server/express4";
-import Redis from "ioredis";
-import resolvers from "./graphql/resolvers";
+import bodyParser from "body-parser";
 import session from "express-session";
+import connectRedis from "connect-redis";
+import Redis from "ioredis";
+import cors from "cors";
+import { ApolloServer } from "@apollo/server";
+import { expressMiddleware } from "@apollo/server/express4";
 import typeDefs from "./graphql/typeDefs";
+import resolvers from "./graphql/resolvers";
+import AppDataSource from "./DataSource";
 
 require("dotenv").config();
 

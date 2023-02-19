@@ -1,9 +1,7 @@
-import { IResolvers } from "@graphql-tools/utils";
 import { AdventureCategory } from "../models/AdventureCategory";
-import {
-    getAdventureCategories,
-    getAdventureCategoryById,
-} from "../repo/AdventureCategoryRepo";
+import { GqlContext } from "./GqlContext";
+import { IResolvers } from "@graphql-tools/utils";
+import { QueryArrayResult, QueryOneResult } from "./QueryArrayResult";
 import {
     changePassword,
     login,
@@ -11,8 +9,10 @@ import {
     register,
     UserResult,
 } from "../repo/UserRepo";
-import { GqlContext } from "./GqlContext";
-import { QueryArrayResult, QueryOneResult } from "./QueryArrayResult";
+import {
+    getAdventureCategories,
+    getAdventureCategoryById,
+} from "../repo/AdventureCategoryRepo";
 
 const _STANDARD_ERROR_ = "An error has occurred";
 

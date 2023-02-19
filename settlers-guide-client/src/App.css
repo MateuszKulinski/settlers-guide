@@ -6,6 +6,10 @@
 
     --bg-body: #34341c;
     --bg-column: #cfad66;
+
+    --border-radius: 20px;
+
+    --margin-mid: 20px;
 }
 
 body {
