@@ -7,10 +7,11 @@ import ReactModal from "react-modal";
 import ModalProps from "../../types/ModalProps";
 import userReducer from "./common/UserReducer";
 import {
+    getErrorInfo,
     isValidEmail,
     isValidPassword,
-    modalError,
 } from "./common/submitHelper";
+import useRefreshMe from "../../hooks/useRefreshMe";
 
 const LoginMutation = gql`
     mutation Login($email: String!, $password: String!) {
@@ -18,45 +19,9 @@ const LoginMutation = gql`
     }
 `;
 
-interface ErrorMessages {
-    email: {
-        empty: string;
-        incorrect: string;
-    };
-    password: {
-        empty: string;
-        incorrect: string;
-    };
-}
-
-const getErrorInfo = (
-    stateName: string,
-    value: string,
-    errorValidation: string
-) => {
-    const errorMessages: ErrorMessages = {
-        email: {
-            empty: modalError.emailEmpty,
-            incorrect: modalError.emailIncorrect,
-        },
-        password: {
-            empty: modalError.passwordEmpty,
-            incorrect: modalError.passwordIncorrect,
-        },
-    };
-
-    const errorType = stateName + "Error";
-    if (stateName === "email" || stateName === "password") {
-        const errorMessage = !value.length
-            ? errorMessages[stateName].empty
-            : errorValidation;
-        return { errorType, errorMessage };
-    }
-    return { errorType, errorMessage: "" };
-};
-
 export const Login: React.FC<ModalProps> = ({ isOpen, onClickToggle }) => {
     const [execLogin] = useMutation(LoginMutation);
+    const { execMe } = useRefreshMe(true);
 
     const [
         {
@@ -70,9 +35,9 @@ export const Login: React.FC<ModalProps> = ({ isOpen, onClickToggle }) => {
         dispatch,
     ] = useReducer(userReducer, {
         email: "",
-        emailError: "",
+        emailError: "Wprowadź e-mail",
         password: "",
-        passwordError: "",
+        passwordError: "Wprowadź hasło",
         resultMsg: "",
         isSubmitDisabled: true,
     });
@@ -120,7 +85,11 @@ export const Login: React.FC<ModalProps> = ({ isOpen, onClickToggle }) => {
                 password,
             },
         });
-        console.log(result);
+        if (result.data.login === "Zalogowano użytkownika") {
+            onClickToggle(e);
+            execMe();
+        }
+        dispatch({ type: "resultMsg", payload: result.data.login });
     };
 
     return (
@@ -146,7 +115,7 @@ export const Login: React.FC<ModalProps> = ({ isOpen, onClickToggle }) => {
                         {emailError}
                     </Form.Control.Feedback>
                 </Form.Group>
-                <Form.Group className="col-xs-12" controlId="formBasicPassword">
+                <Form.Group className="col-xs-12">
                     <Form.Label>Hasło</Form.Label>
                     <Form.Control
                         name="password"

@@ -9,12 +9,21 @@ import { expressMiddleware } from "@apollo/server/express4";
 import typeDefs from "./graphql/typeDefs";
 import resolvers from "./graphql/resolvers";
 import AppDataSource from "./DataSource";
-
 require("dotenv").config();
 
+declare global {
+    namespace Express {
+        interface SessionData {
+            cookie: any;
+        }
+    }
+}
+
 declare module "express-session" {
-    export interface SessionData {
-        user: { [key: string]: any };
+    interface Session {
+        loadedCount: Number;
+        test: any;
+        userId: any;
     }
 }
 
@@ -42,6 +51,7 @@ const main = async () => {
     await AppDataSource.initialize();
     await apolloServer.start();
 
+    app.use(bodyParser.json());
     app.use(
         session({
             store: redisStore,
@@ -49,15 +59,14 @@ const main = async () => {
             sameSite: "Strict",
             secret: String(process.env.SESSION_SECRET),
             resave: false,
-            saveUninitialized: true,
+            saveUninitialized: false,
             cookie: {
                 httpOnly: true,
-                secure: true,
+                secure: false,
                 maxAge: 1000 * 60 * 60 * 24,
             },
         } as any)
     );
-    app.use(bodyParser.json());
     app.use(router);
     app.use(
         _SERVER_URL_,

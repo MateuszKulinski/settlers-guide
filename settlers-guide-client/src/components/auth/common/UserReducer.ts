@@ -12,10 +12,16 @@ const userReducer = (state: any, action: any) => {
             return { ...state, passwordConfirmation: action.payload };
         case "passwordConfirmationError":
             return { ...state, passwordConfirmationError: action.payload };
+        case "userName":
+            return { ...state, userName: action.payload };
+        case "userNameError":
+            return { ...state, userNameError: action.payload };
         case "resultMsg":
             return { ...state, resultMsg: action.payload };
         case "isSubmitDisabled":
             return { ...state, isSubmitDisabled: action.payload };
+        case "isSubmitResponsePositive":
+            return { ...state, isSubmitResponsePositive: action.payload };
         default:
             return {
                 ...state,

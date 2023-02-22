@@ -1,15 +1,26 @@
 export const _PASSWORD_MIN_LENGTH_ = 6;
 
-export interface PasswordTestResult {
+export interface TestResult {
     message: string;
     isValid: boolean;
 }
 
-export const isPasswordValid = (password: string): PasswordTestResult => {
-    const passwordTestResult: PasswordTestResult = {
+const _USERNAME_MIN_LENGTH_ = 3;
+
+export const isPasswordValid = (
+    password: string,
+    passwordConfirmation: string
+): TestResult => {
+    const passwordTestResult: TestResult = {
         message: "",
         isValid: true,
     };
+
+    if (password !== passwordConfirmation) {
+        passwordTestResult.message = "Hasła muszą być takie same";
+        passwordTestResult.isValid = false;
+        return passwordTestResult;
+    }
 
     if (password.length < _PASSWORD_MIN_LENGTH_) {
         passwordTestResult.message = "Hasło musi mieć minimum 6 znaków";
@@ -29,4 +40,18 @@ export const isPasswordValid = (password: string): PasswordTestResult => {
     }
 
     return passwordTestResult;
+};
+
+export const isValidUserName = (userName: string): TestResult => {
+    const userNameTestResult: TestResult = {
+        message: "",
+        isValid: true,
+    };
+
+    if (userName.length < _USERNAME_MIN_LENGTH_) {
+        userNameTestResult.message = `Nazwa użytkownika musi mieć minimum ${_USERNAME_MIN_LENGTH_} znaków`;
+        userNameTestResult.isValid = false;
+    }
+
+    return userNameTestResult;
 };

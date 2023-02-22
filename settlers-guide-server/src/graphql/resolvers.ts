@@ -6,6 +6,7 @@ import {
     changePassword,
     login,
     logout,
+    me,
     register,
     UserResult,
 } from "../repo/UserRepo";
@@ -13,6 +14,7 @@ import {
     getAdventureCategories,
     getAdventureCategoryById,
 } from "../repo/AdventureCategoryRepo";
+import { User } from "../models/User";
 
 const _STANDARD_ERROR_ = "An error has occurred";
 
@@ -20,17 +22,9 @@ interface EntityResult {
     messages: Array<string>;
 }
 
-const isUserExist = (ctx: GqlContext): boolean => {
-    if (!ctx.req.session || !ctx.req.session.user?.id) {
-        return false;
-    }
-    return true;
-};
-
 const resolvers: IResolvers = {
     AdventureResult: {
         __resolveType(obj: any, context: GqlContext, info: any) {
-            console.log(context, info);
             if (obj.messages) {
                 return "EntitiResult";
             }
@@ -39,7 +33,6 @@ const resolvers: IResolvers = {
     },
     AdventureCategoryResult: {
         __resolveType(obj: any, context: GqlContext, info: any) {
-            console.log(context, info);
             if (obj.messages) {
                 return "EntitiResult";
             }
@@ -48,7 +41,6 @@ const resolvers: IResolvers = {
     },
     UserResult: {
         __resolveType(obj: any, context: GqlContext, info: any) {
-            console.log(context, info);
             if (obj.messages) {
                 return "EntityResult";
             }
@@ -75,6 +67,7 @@ const resolvers: IResolvers = {
                         : [_STANDARD_ERROR_],
                 };
             } catch (error) {
+                console.log(error);
                 throw error;
             }
         },
@@ -97,13 +90,41 @@ const resolvers: IResolvers = {
                         : [_STANDARD_ERROR_],
                 };
             } catch (error) {
+                console.log(error);
                 throw error;
             }
         },
         //query categories end
+        //query user start
+        me: async (
+            obj: any,
+            args: null,
+            ctx: GqlContext,
+            info: any
+        ): Promise<User | EntityResult> => {
+            let user: UserResult;
+            try {
+                if (!ctx.req.session?.userId) {
+                    return { messages: ["Użytkownik nie jest zalogowany"] };
+                }
+
+                user = await me(ctx.req.session?.userId);
+                if (user && user.user) {
+                    return user.user;
+                }
+                return {
+                    messages: user.messages
+                        ? user.messages
+                        : [_STANDARD_ERROR_],
+                };
+            } catch (error) {
+                throw error;
+            }
+        },
+        //query user end
     },
     Mutation: {
-        //user mutation start
+        //mutation user start
         changePassword: async (
             obj: any,
             args: { newPassword: string; oldPassword: string },
@@ -111,11 +132,11 @@ const resolvers: IResolvers = {
             info: any
         ): Promise<string> => {
             try {
-                if (!isUserExist(ctx)) {
-                    ("Zaloguj się, aby zmienić hasło");
+                if (!ctx.req.session || !ctx.req.session!.userId) {
+                    return "Aby zmienić hasło, musisz się najpierw zalogować.";
                 }
 
-                const id = ctx.req.session.user?.id;
+                const id = ctx.req.session!.userId;
                 let result = await changePassword(
                     id,
                     args.newPassword,
@@ -138,17 +159,13 @@ const resolvers: IResolvers = {
             try {
                 user = await login(args.email, args.password);
                 if (user && user.user) {
-                    ctx.req.session?.user || (ctx.req.session!.user = {});
-                    ctx.req.session.user.id = user.user.id;
-                    return `Zalogowano użytkownika userId ${
-                        ctx.req.session!.user.id
-                    }.`;
+                    ctx.req.session!.userId = user.user.id;
+                    return `Zalogowano użytkownika`;
                 }
                 return user && user.messages
                     ? user.messages[0]
                     : _STANDARD_ERROR_;
             } catch (error) {
-                console.log(error.message);
                 throw error;
             }
         },
@@ -165,7 +182,7 @@ const resolvers: IResolvers = {
                         console.log("Problem z usunięciem sesji");
                         return;
                     }
-                    console.log("Sesja usunięta", ctx.req.session?.user?.id);
+                    console.log("Sesja usunięta", ctx.req.session!.userId);
                 });
                 return result;
             } catch (error) {
@@ -175,16 +192,27 @@ const resolvers: IResolvers = {
         },
         register: async (
             obj: any,
-            args: { email: string; password: string },
+            args: {
+                email: string;
+                password: string;
+                passwordConfirmation: string;
+                userName: string;
+            },
             ctx: GqlContext,
             info: any
         ): Promise<string> => {
             let user: UserResult;
             try {
-                user = await register(args.email, args.password);
+                user = await register(
+                    args.email,
+                    args.password,
+                    args.passwordConfirmation,
+                    args.userName
+                );
                 if (user && user.user) {
                     return "Zarejestrowano użytkownika";
                 }
+
                 return user && user.messages
                     ? user.messages[0]
                     : _STANDARD_ERROR_;
@@ -193,7 +221,7 @@ const resolvers: IResolvers = {
                 throw error;
             }
         },
-        //mutation user end
+        //user mutation end
     },
 };
 

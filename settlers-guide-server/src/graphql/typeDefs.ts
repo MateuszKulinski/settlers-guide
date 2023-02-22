@@ -27,6 +27,7 @@ const typeDefs = `#graphql
     password: String!
     createdOn: String!
     lastModifiedOn: String!
+    userName: String!
   }
   
 
@@ -40,7 +41,7 @@ const typeDefs = `#graphql
     changePassword(newPassword: String, oldPassword: String): String!
     login(email: String, password: String): String!
     logout(email: String): String!
-    register(email: String!, password: String!): String!
+    register(email: String!, password: String!, passwordConfirmation: String!, userName: String!): String!
   }
 `;
 

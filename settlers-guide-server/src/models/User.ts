@@ -23,15 +23,19 @@ export class User extends Auditable {
     email: string;
 
     @Column("varchar", {
-        name: "Password",
+        name: "Username",
         length: 100,
+        unique: true,
         nullable: false,
     })
-    @Column("boolean", { name: "Confirmed", default: false, nullable: false })
-    confirmed: boolean;
+    userName: string;
 
+    @Column("varchar", { name: "Password", length: 100, nullable: false })
     @Length(8, 100)
     password: string;
+
+    @Column("boolean", { name: "Confirmed", default: false, nullable: false })
+    confirmed: boolean;
 
     @OneToMany(() => General, (general) => general.user)
     generals: General;
