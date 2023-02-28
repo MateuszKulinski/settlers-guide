@@ -32,11 +32,11 @@ export const isValidUserName = (userName: string): string => {
 
 export const isValidPassword = (password: string): string => {
     if (password.length < _PASSWORD_MIN_LENGTH_) {
-        return "Hasło musi mieć minimum 6 znaków";
+        return `Hasło musi mieć minimum ${_PASSWORD_MIN_LENGTH_} znaków`;
     }
 
     const strongPassword = new RegExp(
-        "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})"
+        `^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{${_PASSWORD_MIN_LENGTH_},})`
     );
 
     if (!strongPassword.test(password)) {

@@ -20,6 +20,7 @@ interface UseRefreshMeResult {
     execMe: (
         options?: QueryLazyOptions<Record<string, any>> | undefined
     ) => void;
+    deleteMe: () => void;
 }
 
 const useRefreshMe = (login: boolean): UseRefreshMeResult => {
@@ -43,8 +44,9 @@ const useRefreshMe = (login: boolean): UseRefreshMeResult => {
         });
     };
 
-    login ? updateMe() : deleteMe();
-    return { execMe };
+    login && updateMe();
+    return { execMe, deleteMe };
+    // return { execMe };
 };
 
 export default useRefreshMe;

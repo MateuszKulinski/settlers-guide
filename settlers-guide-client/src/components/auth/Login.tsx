@@ -11,7 +11,7 @@ import {
     isValidEmail,
     isValidPassword,
 } from "./common/submitHelper";
-import useRefreshMe from "../../hooks/useRefreshMe";
+import useRefreshMe, { Me } from "../../hooks/useRefreshMe";
 
 const LoginMutation = gql`
     mutation Login($email: String!, $password: String!) {
@@ -20,7 +20,13 @@ const LoginMutation = gql`
 `;
 
 export const Login: React.FC<ModalProps> = ({ isOpen, onClickToggle }) => {
-    const [execLogin] = useMutation(LoginMutation);
+    const [execLogin] = useMutation(LoginMutation, {
+        refetchQueries: [
+            {
+                query: Me,
+            },
+        ],
+    });
     const { execMe } = useRefreshMe(true);
 
     const [

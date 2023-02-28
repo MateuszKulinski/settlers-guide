@@ -182,7 +182,7 @@ const resolvers: IResolvers = {
                         console.log("Problem z usunięciem sesji");
                         return;
                     }
-                    console.log("Sesja usunięta", ctx.req.session!.userId);
+                    console.log("Sesja usunięta");
                 });
                 return result;
             } catch (error) {
