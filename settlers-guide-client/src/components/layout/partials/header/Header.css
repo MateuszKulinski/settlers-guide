@@ -13,7 +13,7 @@
     z-index: 1300;
     position: fixed;
 }
-.invalid-feedback {
+.modal-menu .invalid-feedback {
     display: block;
 }
 .container-username {

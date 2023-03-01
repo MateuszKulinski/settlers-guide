@@ -1,0 +1,13 @@
+.adventureListUl {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-in-out;
+}
+
+.open.adventureListUl {
+    max-height: 1500px;
+}
+
+.closed.adventureListUl {
+    max-height: 0;
+}

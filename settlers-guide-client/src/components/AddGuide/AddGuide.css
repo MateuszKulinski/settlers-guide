@@ -1,0 +1,11 @@
+.form-control + .invalid-feedback {
+    display: block;
+}
+
+.form-control.is-valid + .invalid-feedback {
+    display: none;
+}
+
+.form-label {
+    width: 100%;
+}

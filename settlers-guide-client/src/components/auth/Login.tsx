@@ -108,7 +108,7 @@ export const Login: React.FC<ModalProps> = ({ isOpen, onClickToggle }) => {
         >
             <Form>
                 {resultMsg && <Alert variant="danger">{resultMsg}</Alert>}
-                <Form.Group className="col-xs-12" controlId="formBasicUsername">
+                <Form.Group className="col-xs-12">
                     <Form.Label>E-mail</Form.Label>
                     <Form.Control
                         name="email"

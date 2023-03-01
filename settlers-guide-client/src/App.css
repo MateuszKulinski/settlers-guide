@@ -14,6 +14,7 @@
 
 body {
     background-color: var(--bg-body);
+    overflow-y: scroll;
 }
 
 .container-main {
@@ -22,4 +23,13 @@ body {
 
 .navbar-nav > button {
     margin: 0 8px;
+}
+
+a {
+    text-decoration: none !important;
+}
+
+.yellowContainer > * {
+    background-color: var(--bg-column);
+    min-height: 300px;
 }

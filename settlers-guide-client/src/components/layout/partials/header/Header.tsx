@@ -143,21 +143,31 @@ export const Header: React.FC = () => {
                 <Navbar.Toggle type="button" aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto">
-                        <Nav.Link href="#" className="text-light">
+                        <Nav.Link href="/" className="text-light">
                             <FontAwesomeIcon
                                 className="me-2"
                                 icon={faHomeAlt}
                             />
                             HOME
                         </Nav.Link>
-                        <Nav.Link href="#" className="text-light">
-                            <FontAwesomeIcon className="me-2" icon={faHeart} />
-                            Ulubione
-                        </Nav.Link>
-                        <Nav.Link href="#" className="text-white">
-                            <FontAwesomeIcon className="me-2" icon={faPlus} />
-                            Dodaj poradnik
-                        </Nav.Link>
+                        {user && (
+                            <>
+                                <Nav.Link href="#" className="text-light">
+                                    <FontAwesomeIcon
+                                        className="me-2"
+                                        icon={faHeart}
+                                    />
+                                    Ulubione
+                                </Nav.Link>
+                                <Nav.Link href="/dodaj" className="text-white">
+                                    <FontAwesomeIcon
+                                        className="me-2"
+                                        icon={faPlus}
+                                    />
+                                    Dodaj poradnik
+                                </Nav.Link>
+                            </>
+                        )}
                         {getMobileAuthButtons()}
                     </Nav>
                 </Navbar.Collapse>
