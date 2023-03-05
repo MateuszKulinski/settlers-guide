@@ -24,7 +24,7 @@ export class GeneralUpgradeType extends BaseEntity {
 
     @OneToMany(
         () => GeneralUpgrade,
-        (generalUpgrade) => generalUpgrade.upgrades
+        (generalUpgrade) => generalUpgrade.upgradeType
     )
     generalUpgades: GeneralUpgrade;
 }

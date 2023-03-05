@@ -1,15 +1,25 @@
 import {
     faHeart,
     faHomeAlt,
-    faPlus,
     faRegistered,
     faSignInAlt,
     faSignOutAlt,
+    faMap,
+    faPersonMilitaryRifle,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Nav, Navbar } from "react-bootstrap";
 import React, { useState } from "react";
-import { _WIDTH_MOBILE_ } from "../../../../assets/consts";
+import {
+    _URL_FAVOURITES_,
+    _URL_GENERALS_,
+    _URL_GUIDES,
+    _URL_GUIDE_,
+    _URL_HOME_,
+    _URL_NEW_GENERAL_,
+    _URL_NEW_GUIDE_,
+    _WIDTH_MOBILE_,
+} from "../../../../assets/consts";
 import { useWindowDimensions } from "../../../../hooks/useWindowDimensions";
 import { Login } from "../../../auth/Login";
 import "./Header.css";
@@ -18,6 +28,7 @@ import { useSelector } from "react-redux";
 import { AppState } from "../../../../store/AppState";
 import { gql, useMutation } from "@apollo/client";
 import useRefreshMe, { Me } from "../../../../hooks/useRefreshMe";
+import { Link } from "react-router-dom";
 
 const LogoutMutation = gql`
     mutation logout($email: String!) {
@@ -143,7 +154,11 @@ export const Header: React.FC = () => {
                 <Navbar.Toggle type="button" aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto">
-                        <Nav.Link href="/" className="text-light">
+                        <Nav.Link
+                            as={Link}
+                            to={_URL_HOME_}
+                            className="text-light"
+                        >
                             <FontAwesomeIcon
                                 className="me-2"
                                 icon={faHomeAlt}
@@ -152,19 +167,38 @@ export const Header: React.FC = () => {
                         </Nav.Link>
                         {user && (
                             <>
-                                <Nav.Link href="#" className="text-light">
+                                <Nav.Link
+                                    as={Link}
+                                    to={_URL_FAVOURITES_}
+                                    className="text-light"
+                                >
                                     <FontAwesomeIcon
                                         className="me-2"
                                         icon={faHeart}
                                     />
                                     Ulubione
                                 </Nav.Link>
-                                <Nav.Link href="/dodaj" className="text-white">
+                                <Nav.Link
+                                    as={Link}
+                                    to={_URL_GUIDES}
+                                    className="text-white"
+                                >
                                     <FontAwesomeIcon
                                         className="me-2"
-                                        icon={faPlus}
+                                        icon={faMap}
                                     />
-                                    Dodaj poradnik
+                                    Moje poradniki
+                                </Nav.Link>
+                                <Nav.Link
+                                    as={Link}
+                                    to={_URL_GENERALS_}
+                                    className="text-white"
+                                >
+                                    <FontAwesomeIcon
+                                        className="me-2"
+                                        icon={faPersonMilitaryRifle}
+                                    />
+                                    Moi generałowie
                                 </Nav.Link>
                             </>
                         )}

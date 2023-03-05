@@ -9,6 +9,7 @@ import { expressMiddleware } from "@apollo/server/express4";
 import typeDefs from "./graphql/typeDefs";
 import resolvers from "./graphql/resolvers";
 import AppDataSource from "./DataSource";
+import path from "path";
 require("dotenv").config();
 
 declare global {
@@ -79,6 +80,18 @@ const main = async () => {
             context: async ({ req, res }: any) => ({ req, res }),
         })
     );
+
+    app.use(express.static("public"));
+
+    app.get(`/api/${process.env.API_VERSION}/img/:type/:id`, (req, res) => {
+        const imagePath = path.join(
+            __dirname,
+            "/img/",
+            `${req.params.type}`,
+            `${req.params.id}.png`
+        );
+        res.sendFile(imagePath);
+    });
 
     app.listen({ port: _PORT_ }, () => {
         console.log(

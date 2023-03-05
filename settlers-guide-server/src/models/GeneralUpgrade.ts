@@ -26,7 +26,7 @@ export class GeneralUpgrade extends BaseEntity {
         () => GeneralUpgradeType,
         (generalUpgradeType) => generalUpgradeType.generalUpgades
     )
-    upgrades: GeneralUpgradeType;
+    upgradeType: GeneralUpgradeType;
 
     @ManyToOne(() => General, (general) => general.upgrades)
     general: General;

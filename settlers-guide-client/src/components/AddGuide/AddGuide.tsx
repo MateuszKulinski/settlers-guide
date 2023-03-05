@@ -1,6 +1,7 @@
 import React, { FC, useState } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { useSelector } from "react-redux";
+import { _CLASS_PADDING_, _CLASS_YELLOW_CONTAINER_ } from "../../assets/consts";
 import Adventure from "../../model/Adventure";
 import AdventureCategory from "../../model/AdventureCategory";
 import { AppState } from "../../store/AppState";
@@ -59,15 +60,13 @@ const AddGuide: FC = () => {
         }
     );
 
-    console.log(!adventure);
-    console.log(!guideName);
     return (
         <Form>
-            <Col className="yellowContainer" xs={12}>
-                <Col xs={12} className="p-3">
+            <Col className={_CLASS_YELLOW_CONTAINER_} xs={12}>
+                <Col xs={12} className={_CLASS_PADDING_}>
                     <Form.Group className="col-xs-12">
                         <Form.Label aria-required="true">
-                            Wprowadź nazwę
+                            Twoja nazwa przygody
                             <Form.Control
                                 required
                                 name="guideName"

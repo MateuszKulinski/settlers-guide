@@ -1,0 +1,15 @@
+.generalItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid var(--gold);
+}
+.generalItem .buttonsContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+.generalItem .buttonsContainer a {
+    color: #fff;
+}

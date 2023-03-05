@@ -32,5 +32,5 @@ export class General extends BaseEntity {
     user: User;
 
     @OneToMany(() => GeneralUpgrade, (generalUpgrade) => generalUpgrade.general)
-    upgrades: GeneralUpgrade;
+    upgrades: GeneralUpgrade[];
 }

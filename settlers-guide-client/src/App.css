@@ -15,6 +15,7 @@
 body {
     background-color: var(--bg-body);
     overflow-y: scroll;
+    font-family: "Roboto";
 }
 
 .container-main {
@@ -32,4 +33,24 @@ a {
 .yellowContainer > * {
     background-color: var(--bg-column);
     min-height: 300px;
+}
+
+.selectContainer {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+}
+
+.selectContainer > span:first-child {
+    min-width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loaderContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 240px;
 }

@@ -13,7 +13,6 @@ export const modalError = {
 };
 
 export const isValidEmail = (email: string): string => {
-    console.log(email);
     const regex: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!regex.test(email) || email.length < 5) {
         return "Nieprawidłowy adres email";

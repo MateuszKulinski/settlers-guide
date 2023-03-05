@@ -15,6 +15,13 @@ import {
     getAdventureCategoryById,
 } from "../repo/AdventureCategoryRepo";
 import { User } from "../models/User";
+import { GeneralType } from "../models/GeneralType";
+import { getGeneralTypes } from "../repo/GeneralTypeRepo";
+import { getGeneralUpgradeTypes } from "../repo/GeneralUpgradeTypeRepo";
+import { GeneralUpgradeType } from "../models/GeneralUpgradeType";
+import { createGeneral, getGenerals } from "../repo/GeneralRepo";
+import { createGeneralUpgrade } from "../repo/GeneralUpgradeRepo";
+import { General } from "../models/General";
 
 const _STANDARD_ERROR_ = "An error has occurred";
 
@@ -39,12 +46,36 @@ const resolvers: IResolvers = {
             return "AdventureCategory";
         },
     },
+    GeneralTypeResult: {
+        __resolveType(obj: any, context: GqlContext, info: any) {
+            if (obj.messages) {
+                return "EntitiResult";
+            }
+            return "GeneralType";
+        },
+    },
+    GeneralUpgradeTypeResult: {
+        __resolveType(obj: any, context: GqlContext, info: any) {
+            if (obj.messages) {
+                return "EntitiResult";
+            }
+            return "GeneralUpgradeType";
+        },
+    },
     UserResult: {
         __resolveType(obj: any, context: GqlContext, info: any) {
             if (obj.messages) {
                 return "EntityResult";
             }
             return "User";
+        },
+    },
+    GeneralResult: {
+        __resolveType(obj: any, context: GqlContext, info: any) {
+            if (obj.messages) {
+                return "EntityResult";
+            }
+            return "General";
         },
     },
     Query: {
@@ -95,6 +126,82 @@ const resolvers: IResolvers = {
             }
         },
         //query categories end
+        //query generals start
+        getGenerals: async (
+            obj: any,
+            args: { id: string },
+            ctx: GqlContext,
+            info: any
+        ): Promise<Array<General> | EntityResult> => {
+            let generals: QueryArrayResult<General>;
+            try {
+                // if (!ctx.req.session?.userId) {
+                //     return { messages: ["Użytkownik nie jest zalogowany"] };
+                // }
+
+                // generals = await getGenerals(args.id, ctx.req.session?.userId);
+                generals = await getGenerals(args.id, "10");
+
+                if (generals.entities) {
+                    return generals.entities;
+                }
+
+                return {
+                    messages: generals.messages
+                        ? generals.messages
+                        : [_STANDARD_ERROR_],
+                };
+            } catch (error) {
+                console.log(error);
+                throw error;
+            }
+        },
+
+        getGeneralTypes: async (
+            obj: any,
+            args: { id: string },
+            ctx: GqlContext,
+            info: any
+        ): Promise<Array<GeneralType> | EntityResult> => {
+            let generalTypes: QueryArrayResult<GeneralType>;
+            try {
+                generalTypes = await getGeneralTypes();
+                if (generalTypes.entities) {
+                    return generalTypes.entities;
+                }
+                return {
+                    messages: generalTypes.messages
+                        ? generalTypes.messages
+                        : [_STANDARD_ERROR_],
+                };
+            } catch (error) {
+                console.log(error);
+                throw error;
+            }
+        },
+        getGeneralUpgradeTypes: async (
+            obj: any,
+            args: { id: string },
+            ctx: GqlContext,
+            info: any
+        ): Promise<Array<GeneralUpgradeType> | EntityResult> => {
+            let generalUpgradeTypes: QueryArrayResult<GeneralUpgradeType>;
+            try {
+                generalUpgradeTypes = await getGeneralUpgradeTypes();
+                if (generalUpgradeTypes.entities) {
+                    return generalUpgradeTypes.entities;
+                }
+                return {
+                    messages: generalUpgradeTypes.messages
+                        ? generalUpgradeTypes.messages
+                        : [_STANDARD_ERROR_],
+                };
+            } catch (error) {
+                console.log(error);
+                throw error;
+            }
+        },
+        //query generals end
         //query user start
         me: async (
             obj: any,
@@ -124,6 +231,56 @@ const resolvers: IResolvers = {
         //query user end
     },
     Mutation: {
+        //mutation general start
+        createGeneral: async (
+            obj: any,
+            args: {
+                name: string;
+                generalType: string;
+                upgrades: Array<{
+                    level: number;
+                    upgradeType: string;
+                }>;
+            },
+            ctx: GqlContext,
+            info: any
+        ): Promise<string> => {
+            try {
+                if (!ctx.req.session || !ctx.req.session!.userId) {
+                    return "Aby zmienić hasło, musisz się najpierw zalogować.";
+                }
+
+                const userId = ctx.req.session!.userId;
+                const general = await createGeneral(
+                    userId,
+                    args.name,
+                    args.generalType
+                );
+                if (general.messages) return general.messages[0];
+                if (!general.entity) return _STANDARD_ERROR_;
+
+                const { upgrades } = args;
+                if (upgrades.length) {
+                    await Promise.all(
+                        upgrades.map(async (item) => {
+                            const { level, upgradeType } = item;
+                            if (general.entity) {
+                                await createGeneralUpgrade(
+                                    level,
+                                    upgradeType,
+                                    general.entity
+                                );
+                            }
+                        })
+                    );
+                }
+                return general.entity.id;
+            } catch (error) {
+                console.log(error.message);
+                throw error;
+            }
+        },
+        //mutation general end
         //mutation user start
         changePassword: async (
             obj: any,

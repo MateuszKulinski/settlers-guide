@@ -29,7 +29,6 @@ const useRefreshMe = (login: boolean): UseRefreshMeResult => {
 
     const updateMe = () => {
         if (data && !loading && data.me && data.me.userName) {
-            console.log(data);
             reduxDispatcher({
                 type: UserProfileSetType,
                 payload: data.me,

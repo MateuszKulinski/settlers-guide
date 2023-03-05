@@ -9,9 +9,17 @@ import { AdventureCategorySetType } from "./store/categories/Reducer";
 import AddGuide from "./components/AddGuide/AddGuide";
 import { Route, Routes } from "react-router-dom";
 import { Col, Container, Row } from "react-bootstrap";
+import {
+    _URL_GENERALS_,
+    _URL_HOME_,
+    _URL_NEW_GENERAL_,
+    _URL_NEW_GUIDE_,
+} from "./assets/consts";
+import AddGeneral from "./components/Generals/AddGeneral/AddGeberal";
+import GeneralsList from "./components/Generals/GeneralsList";
 
 const GetAllAdventureCategories = gql`
-    query EntityResult {
+    query {
         getAdventureCategories {
             ... on EntityResult {
                 messages
@@ -53,8 +61,16 @@ const App: React.FC = () => {
             <Container className="container-main" fluid="md">
                 <Row>
                     <Routes>
-                        <Route path="/" element={<Main />} />
-                        <Route path="/dodaj" element={<AddGuide />} />
+                        <Route path={_URL_HOME_} element={<Main />} />
+                        <Route path={_URL_NEW_GUIDE_} element={<AddGuide />} />
+                        <Route
+                            path={_URL_NEW_GENERAL_}
+                            element={<AddGeneral />}
+                        />
+                        <Route
+                            path={_URL_GENERALS_}
+                            element={<GeneralsList />}
+                        />
                     </Routes>
                 </Row>
             </Container>

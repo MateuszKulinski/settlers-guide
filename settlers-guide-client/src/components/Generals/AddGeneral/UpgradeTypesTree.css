@@ -1,0 +1,27 @@
+.upgradeContainer {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row-reverse;
+    width: 215px;
+    height: auto;
+    gap: 5px;
+}
+
+.upgradeContainer > div {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: row;
+    width: 50px;
+    height: 40px;
+    align-items: center;
+}
+
+.levelUpgradeContainer {
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+}
+
+.levelUpgrade {
+    border-bottom: 1px solid black;
+}

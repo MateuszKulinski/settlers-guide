@@ -30,13 +30,13 @@ const CategoryListItem: FC<CategoryListItemProps> = ({
         ? adventures.map((adventure: Adventure) => {
               const { id, name } = adventure;
               return (
-                  <li>
+                  <li key={id}>
                       <Link to={`/adventure/${id}`}>{name}</Link>
                   </li>
               );
           })
         : "";
-    console.log(adventures);
+
     return (
         <>
             <h5>

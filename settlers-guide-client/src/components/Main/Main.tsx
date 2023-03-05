@@ -5,6 +5,7 @@ import { AppState } from "../../store/AppState";
 import { useSelector } from "react-redux";
 import AdventureCategory from "../../model/AdventureCategory";
 import CategoryListItem from "../CategoriesList/CategoryListItem";
+import { _CLASS_PADDING_, _CLASS_YELLOW_CONTAINER_ } from "../../assets/consts";
 
 const Main: React.FC = () => {
     const categories = useSelector((state: AppState) => state.categories);
@@ -26,11 +27,11 @@ const Main: React.FC = () => {
 
     return (
         <>
-            <Col className="yellowContainer" md={9} xs={12}>
-                <Col xs={12} className="p-3"></Col>
+            <Col className={_CLASS_YELLOW_CONTAINER_} md={9} xs={12}>
+                <Col xs={12} className={_CLASS_PADDING_}></Col>
             </Col>
-            <Col className="yellowContainer" md={3} xs={12}>
-                <Col xs={12} className="p-3">
+            <Col className={_CLASS_YELLOW_CONTAINER_} md={3} xs={12}>
+                <Col xs={12} className={_CLASS_PADDING_}>
                     <ul className="categoryListContent">{categoriesContent}</ul>
                 </Col>
             </Col>
