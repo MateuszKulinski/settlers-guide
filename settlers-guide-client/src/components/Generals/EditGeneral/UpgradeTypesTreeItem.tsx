@@ -1,18 +1,21 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { _API_VERSION_, _SERVER_URL_ } from "../../../assets/consts";
 import GeneralUpgradeType from "../../../model/GeneralUpgradeType";
-import { GeneralUpgradeTypeItemInterface } from "./AddGeberal";
+import { GeneralUpgradeTypeItemInterface } from "./EditGeneral";
 
 interface GeneralUpgradeTypeItemProps {
     generalUpgradeType: GeneralUpgradeType;
     sendOutUpgradeItem: (item: GeneralUpgradeTypeItemInterface) => void;
+    startValue: number;
 }
 
 const GeneralUpgradeTypeItem: FC<GeneralUpgradeTypeItemProps> = ({
     generalUpgradeType,
     sendOutUpgradeItem,
+    startValue,
 }) => {
-    const [level, setLevel] = useState<number>(0);
+    console.log(startValue);
+    const [level, setLevel] = useState<number>(startValue);
 
     const handleUpgradeClick = () => {
         const newLevel = level >= 3 ? 0 : level + 1;
@@ -23,6 +26,10 @@ const GeneralUpgradeTypeItem: FC<GeneralUpgradeTypeItemProps> = ({
         };
         sendOutUpgradeItem(newItem);
     };
+
+    useEffect(() => {
+        setLevel(startValue);
+    }, []);
 
     return (
         <div onClick={handleUpgradeClick}>

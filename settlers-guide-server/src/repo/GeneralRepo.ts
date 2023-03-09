@@ -12,7 +12,9 @@ export const getGenerals = async (
             id: userId,
         },
     });
-
+    console.log("TEST");
+    console.log("AAA");
+    console.log(id);
     const generals = id
         ? await General.createQueryBuilder("general")
               .leftJoinAndSelect("general.upgrades", "generalUpgrade")
@@ -21,6 +23,11 @@ export const getGenerals = async (
                   "generalUpgradeType"
               )
               .leftJoinAndSelect("general.generalType", "generalType")
+              //   .where("general.id = :id AND general.user = :user", {
+              //       id: id,
+              //       user: user,
+              //   })
+
               .where({ user, id })
               .getMany()
         : await General.createQueryBuilder("general")
@@ -32,10 +39,7 @@ export const getGenerals = async (
               .leftJoinAndSelect("general.generalType", "generalType")
               .where({ user })
               .getMany();
-    if (generals[0].upgrades) {
-        console.log(generals[0].upgrades);
-    }
-
+    console.log(generals);
     if (!generals || generals.length === 0) {
         return { messages: ["Nie można pobrać generałów"] };
     }

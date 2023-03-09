@@ -66,7 +66,7 @@ const typeDefs = `#graphql
     getAdventureCategory(id: ID!): AdventureCategoryResult!
     getAdventureCategories: [AdventureCategoryResult!]
     getGeneralTypes: [GeneralTypeResult!]
-    getGenerals: [GeneralResult!]
+    getGenerals(id:ID): [GeneralResult!]
     getGeneralUpgradeTypes: [GeneralUpgradeTypeResult!]
   }
   

@@ -6,6 +6,6 @@ export default class General {
         public id: string,
         public name: string,
         public generalType: GeneralType,
-        public upgrades: GeneralUpgrade
+        public upgrades: [GeneralUpgrade]
     ) {}
 }

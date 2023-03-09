@@ -13,3 +13,6 @@
 .generalItem .buttonsContainer a {
     color: #fff;
 }
+.generalItem h6 {
+    margin-bottom: 0;
+}

@@ -10,12 +10,13 @@ import AddGuide from "./components/AddGuide/AddGuide";
 import { Route, Routes } from "react-router-dom";
 import { Col, Container, Row } from "react-bootstrap";
 import {
+    _URL_EDIT_GENERAL_,
     _URL_GENERALS_,
     _URL_HOME_,
     _URL_NEW_GENERAL_,
     _URL_NEW_GUIDE_,
 } from "./assets/consts";
-import AddGeneral from "./components/Generals/AddGeneral/AddGeberal";
+import EditGeneral from "./components/Generals/EditGeneral/EditGeneral";
 import GeneralsList from "./components/Generals/GeneralsList";
 
 const GetAllAdventureCategories = gql`
@@ -65,11 +66,15 @@ const App: React.FC = () => {
                         <Route path={_URL_NEW_GUIDE_} element={<AddGuide />} />
                         <Route
                             path={_URL_NEW_GENERAL_}
-                            element={<AddGeneral />}
+                            element={<EditGeneral />}
                         />
                         <Route
                             path={_URL_GENERALS_}
                             element={<GeneralsList />}
+                        />
+                        <Route
+                            path={`${_URL_EDIT_GENERAL_}:generalId`}
+                            element={<EditGeneral />}
                         />
                     </Routes>
                 </Row>

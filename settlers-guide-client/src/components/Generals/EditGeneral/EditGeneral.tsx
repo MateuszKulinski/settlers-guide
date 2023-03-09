@@ -11,7 +11,8 @@ import {
 import GeneralType from "../../../model/GeneralType";
 import Select, { SingleValue } from "react-select";
 import UpgradeTypesTree from "./UpgradeTypesTree";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import General from "../../../model/General";
 
 export interface GeneralUpgradeTypeItemInterface {
     upgradeType: string;
@@ -52,7 +53,35 @@ const CreateGeneral = gql`
     }
 `;
 
-const AddGeneral: FC = () => {
+const GetMyGenerals = gql`
+    query GetGenerals($id: ID!) {
+        getGenerals(id: $id) {
+            ... on General {
+                name
+                id
+                generalType {
+                    id
+                    name
+                }
+                upgrades {
+                    level
+                    id
+                    upgradeType {
+                        name
+                        id
+                    }
+                }
+            }
+        }
+    }
+`;
+
+const EditGeneral: FC = () => {
+    const { generalId } = useParams();
+    const { data: dataGeneral } = useQuery(GetMyGenerals, {
+        variables: { id: generalId },
+    });
+    const [general, setGeneral] = useState<General | undefined>(undefined);
     const [generalType, setGeneralType] = useState<any>();
     const [generalUpgradeTypesWithLevel, setGeneralUpgradeTypesWithLevel] =
         useState<GeneralUpgradeTypeItemInterface[]>([]);
@@ -65,25 +94,38 @@ const AddGeneral: FC = () => {
 
     useEffect(() => {
         const options = dataGeneralTypes?.getGeneralTypes.map(
-            (item: GeneralType) => ({
-                value: item.name,
-                realValue: item.id,
-                label: (
-                    <div className="selectContainer">
-                        <span>
-                            <img
-                                src={`${_SERVER_URL_}/api/${_API_VERSION_}/img/GeneralType/${item.id}`}
-                                alt={`${item.name}`}
-                            />
-                        </span>
-                        <span>{item.name}</span>
-                    </div>
-                ),
-            })
+            (item: GeneralType) => createTypeOption(item)
         );
 
         setGeneralTypes(options);
     }, [dataGeneralTypes]);
+
+    useEffect(() => {
+        if (generalId && dataGeneral && dataGeneral.getGenerals) {
+            const general = dataGeneral.getGenerals[0];
+            setGeneralName(general.name);
+            setGeneralType(createTypeOption(general.generalType));
+            setGeneral(general);
+        }
+    }, [dataGeneral]);
+
+    const createTypeOption = (item: GeneralType) => {
+        return {
+            value: item.name,
+            realValue: item.id,
+            label: (
+                <div className="selectContainer">
+                    <span>
+                        <img
+                            src={`${_SERVER_URL_}/api/${_API_VERSION_}/img/GeneralType/${item.id}`}
+                            alt={`${item.name}`}
+                        />
+                    </span>
+                    <span>{item.name}</span>
+                </div>
+            ),
+        };
+    };
 
     const handleGeneralNameChange = (
         e: React.ChangeEvent<HTMLInputElement>
@@ -127,7 +169,6 @@ const AddGeneral: FC = () => {
         e: React.MouseEvent<HTMLButtonElement, MouseEvent>
     ) => {
         e.preventDefault();
-        console.log(generalUpgradeTypesWithLevel);
         const newGeneral: CreateGeneralInput = {
             name: generalName,
             generalType: generalType?.realValue,
@@ -142,6 +183,7 @@ const AddGeneral: FC = () => {
             ? setErrorMsg(createGeneralMsg)
             : navigate(_URL_HOME_);
     };
+
     return (
         <Form>
             <Col
@@ -159,6 +201,7 @@ const AddGeneral: FC = () => {
                                 type="text"
                                 onChange={handleGeneralNameChange}
                                 isValid={!!generalName}
+                                value={generalName}
                             ></Form.Control>
                         </Form.Label>
                     </Form.Group>
@@ -179,6 +222,7 @@ const AddGeneral: FC = () => {
                             Wybierz ulepszenia
                             <UpgradeTypesTree
                                 sendOutUpgradeItem={handleUpgradeChange}
+                                generalUpgrades={general?.upgrades}
                             />
                         </Form.Label>
                     </Form.Group>
@@ -191,11 +235,11 @@ const AddGeneral: FC = () => {
                     style={{ width: "100%" }}
                     disabled={!generalName || !generalType}
                 >
-                    Dodaj
+                    {general ? "Zapisz" : "Dodaj"}
                 </Button>
             </Col>
         </Form>
     );
 };
 
-export default AddGeneral;
+export default EditGeneral;

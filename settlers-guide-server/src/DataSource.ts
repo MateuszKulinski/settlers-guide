@@ -8,8 +8,8 @@ const AppDataSource = new DataSource({
     username: process.env.PG_ACCOUNT,
     password: process.env.PG_PASSWORD,
     database: process.env.PG_DATABASE,
-    synchronize: Boolean(process.env.PG_SYNCHRONIZE),
-    logging: Boolean(process.env.PG_LOGGING),
+    synchronize: Boolean(process.env.PG_SYNCHRONIZE === "false" ? false : true),
+    logging: Boolean(process.env.PG_LOGGING === "false" ? false : true),
     entities: [String(process.env.PG_ENTITIES)],
 });
 

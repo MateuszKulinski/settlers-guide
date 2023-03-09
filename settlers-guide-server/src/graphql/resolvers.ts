@@ -135,12 +135,11 @@ const resolvers: IResolvers = {
         ): Promise<Array<General> | EntityResult> => {
             let generals: QueryArrayResult<General>;
             try {
-                // if (!ctx.req.session?.userId) {
-                //     return { messages: ["Użytkownik nie jest zalogowany"] };
-                // }
+                if (!ctx.req.session?.userId) {
+                    return { messages: ["Użytkownik nie jest zalogowany"] };
+                }
 
-                // generals = await getGenerals(args.id, ctx.req.session?.userId);
-                generals = await getGenerals(args.id, "10");
+                generals = await getGenerals(args.id, ctx.req.session?.userId);
 
                 if (generals.entities) {
                     return generals.entities;
