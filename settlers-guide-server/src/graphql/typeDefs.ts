@@ -71,11 +71,13 @@ const typeDefs = `#graphql
   }
   
   type Mutation {
-    createGeneral(
+    saveGeneral(
+      generalId: ID
       name: String!
       generalType: ID!
       upgrades: [GeneralUpgradeInput!]
     ): String!
+    deleteGeneral(generalId: ID!): Boolean
     changePassword(newPassword: String, oldPassword: String): String!
     login(email: String, password: String): String!
     logout(email: String): String!

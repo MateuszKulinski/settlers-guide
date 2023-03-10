@@ -18,7 +18,9 @@ export class GuidePoints extends Auditable {
     })
     increment: boolean;
 
-    @ManyToOne(() => User, (user) => user.guidePoints)
+    @ManyToOne(() => User, (user) => user.guidePoints, {
+        onDelete: "CASCADE",
+    })
     user: User;
 
     @ManyToOne(() => Guide, (guide) => guide.guidePoints)

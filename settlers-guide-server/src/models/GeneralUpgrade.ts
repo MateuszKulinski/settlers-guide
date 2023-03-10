@@ -28,6 +28,8 @@ export class GeneralUpgrade extends BaseEntity {
     )
     upgradeType: GeneralUpgradeType;
 
-    @ManyToOne(() => General, (general) => general.upgrades)
+    @ManyToOne(() => General, (general) => general.upgrades, {
+        onDelete: "CASCADE",
+    })
     general: General;
 }

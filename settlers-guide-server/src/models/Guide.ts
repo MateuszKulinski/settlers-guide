@@ -41,7 +41,9 @@ export class Guide extends Auditable {
     })
     type: number;
 
-    @ManyToOne(() => User, (user) => user.guides)
+    @ManyToOne(() => User, (user) => user.guides, {
+        onDelete: "CASCADE",
+    })
     user: User;
 
     @ManyToMany(() => General)

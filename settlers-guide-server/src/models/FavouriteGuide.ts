@@ -9,6 +9,8 @@ export class FavouriteGuide extends BaseEntity {
     })
     id: string;
 
-    @ManyToOne(() => User, (user) => user.favouriteGuide)
+    @ManyToOne(() => User, (user) => user.favouriteGuide, {
+        onDelete: "CASCADE",
+    })
     user: User;
 }

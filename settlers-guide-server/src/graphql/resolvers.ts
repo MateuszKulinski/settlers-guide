@@ -19,8 +19,8 @@ import { GeneralType } from "../models/GeneralType";
 import { getGeneralTypes } from "../repo/GeneralTypeRepo";
 import { getGeneralUpgradeTypes } from "../repo/GeneralUpgradeTypeRepo";
 import { GeneralUpgradeType } from "../models/GeneralUpgradeType";
-import { createGeneral, getGenerals } from "../repo/GeneralRepo";
-import { createGeneralUpgrade } from "../repo/GeneralUpgradeRepo";
+import { saveGeneral, getGenerals, deleteGeneral } from "../repo/GeneralRepo";
+import { saveGeneralUpgrade } from "../repo/GeneralUpgradeRepo";
 import { General } from "../models/General";
 
 const _STANDARD_ERROR_ = "An error has occurred";
@@ -231,9 +231,10 @@ const resolvers: IResolvers = {
     },
     Mutation: {
         //mutation general start
-        createGeneral: async (
+        saveGeneral: async (
             obj: any,
             args: {
+                generalId: string | undefined;
                 name: string;
                 generalType: string;
                 upgrades: Array<{
@@ -250,8 +251,9 @@ const resolvers: IResolvers = {
                 }
 
                 const userId = ctx.req.session!.userId;
-                const general = await createGeneral(
+                const general = await saveGeneral(
                     userId,
+                    args.generalId,
                     args.name,
                     args.generalType
                 );
@@ -264,7 +266,7 @@ const resolvers: IResolvers = {
                         upgrades.map(async (item) => {
                             const { level, upgradeType } = item;
                             if (general.entity) {
-                                await createGeneralUpgrade(
+                                await saveGeneralUpgrade(
                                     level,
                                     upgradeType,
                                     general.entity
@@ -274,6 +276,23 @@ const resolvers: IResolvers = {
                     );
                 }
                 return general.entity.id;
+            } catch (error) {
+                console.log(error.message);
+                throw error;
+            }
+        },
+        deleteGeneral: async (
+            obj: any,
+            args: { generalId: string },
+            ctx: GqlContext,
+            info: any
+        ): Promise<boolean> => {
+            try {
+                if (!ctx.req.session || !ctx.req.session!.userId) {
+                    return false;
+                }
+
+                return deleteGeneral(args.generalId, ctx.req.session!.userId);
             } catch (error) {
                 console.log(error.message);
                 throw error;

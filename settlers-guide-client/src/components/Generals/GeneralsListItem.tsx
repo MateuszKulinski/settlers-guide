@@ -7,9 +7,14 @@ import "./GeneralsListItem.css";
 
 interface GeneralsListItemProps {
     general: General;
+    onDelete: (generalId: string) => void;
 }
 
-const GeneralsListItem: FC<GeneralsListItemProps> = ({ general }) => {
+const GeneralsListItem: FC<GeneralsListItemProps> = ({ general, onDelete }) => {
+    const handleDelete = () => {
+        onDelete(general.id);
+    };
+
     return (
         <div className="generalItem">
             <h6>{general.name}</h6>
@@ -19,8 +24,8 @@ const GeneralsListItem: FC<GeneralsListItemProps> = ({ general }) => {
                         Edytuj
                     </Link>
                 </Button>
-                <Button variant="danger">
-                    <Link to={`${_URL_EDIT_GENERAL_}${general.id}`}>Usuń</Link>
+                <Button variant="danger" onClick={handleDelete}>
+                    Usuń
                 </Button>
             </div>
         </div>

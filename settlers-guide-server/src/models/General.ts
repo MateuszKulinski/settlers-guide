@@ -28,9 +28,15 @@ export class General extends BaseEntity {
     @ManyToOne(() => GeneralType, (generalType) => generalType.general)
     generalType: GeneralType;
 
-    @ManyToOne(() => User, (user) => user.generals)
+    @ManyToOne(() => User, (user) => user.generals, {
+        onDelete: "CASCADE",
+    })
     user: User;
 
-    @OneToMany(() => GeneralUpgrade, (generalUpgrade) => generalUpgrade.general)
+    @OneToMany(
+        () => GeneralUpgrade,
+        (generalUpgrade) => generalUpgrade.general,
+        { cascade: true }
+    )
     upgrades: GeneralUpgrade[];
 }

@@ -12,9 +12,6 @@ export const getGenerals = async (
             id: userId,
         },
     });
-    console.log("TEST");
-    console.log("AAA");
-    console.log(id);
     const generals = id
         ? await General.createQueryBuilder("general")
               .leftJoinAndSelect("general.upgrades", "generalUpgrade")
@@ -23,12 +20,8 @@ export const getGenerals = async (
                   "generalUpgradeType"
               )
               .leftJoinAndSelect("general.generalType", "generalType")
-              //   .where("general.id = :id AND general.user = :user", {
-              //       id: id,
-              //       user: user,
-              //   })
-
               .where({ user, id })
+              .orderBy("general.id", "ASC")
               .getMany()
         : await General.createQueryBuilder("general")
               .leftJoinAndSelect("general.upgrades", "generalUpgrade")
@@ -38,8 +31,9 @@ export const getGenerals = async (
               )
               .leftJoinAndSelect("general.generalType", "generalType")
               .where({ user })
+              .orderBy("general.id", "ASC")
               .getMany();
-    console.log(generals);
+
     if (!generals || generals.length === 0) {
         return { messages: ["Nie można pobrać generałów"] };
     }
@@ -49,8 +43,9 @@ export const getGenerals = async (
     };
 };
 
-export const createGeneral = async (
+export const saveGeneral = async (
     userId: string,
+    generalId: string | undefined,
     name: string,
     type: string
 ): Promise<QueryOneResult<General>> => {
@@ -67,12 +62,31 @@ export const createGeneral = async (
     });
 
     if (!generalType || !user) return { messages: ["Błąd dodawania generała"] };
+    let general: General | null;
+    if (generalId) {
+        general = await General.findOne({
+            where: {
+                id: generalId,
+                user: {
+                    id: userId,
+                },
+            },
+            relations: ["generalType", "user"],
+        });
+        if (!general) {
+            return { messages: ["Nie znaleziono generała o podanym ID"] };
+        }
 
-    const general = await General.create({
-        name,
-        generalType,
-        user,
-    }).save();
+        general.name = name;
+        general.generalType = generalType;
+        general.save();
+    } else {
+        general = await General.create({
+            name,
+            generalType,
+            user,
+        }).save();
+    }
 
     if (!general) {
         return { messages: ["Błąd dodawania generała"] };
@@ -81,4 +95,18 @@ export const createGeneral = async (
     return {
         entity: general,
     };
+};
+
+export const deleteGeneral = async (generalId: string, userId: string) => {
+    const general = await General.createQueryBuilder("general")
+        .leftJoinAndSelect("general.user", "user")
+        .where("general.id = :generalId", { generalId })
+        .andWhere("user.id = :userId", { userId })
+        .getOne();
+
+    if (general) {
+        general.remove();
+        return true;
+    }
+    return false;
 };

@@ -14,7 +14,6 @@ const GeneralUpgradeTypeItem: FC<GeneralUpgradeTypeItemProps> = ({
     sendOutUpgradeItem,
     startValue,
 }) => {
-    console.log(startValue);
     const [level, setLevel] = useState<number>(startValue);
 
     const handleUpgradeClick = () => {

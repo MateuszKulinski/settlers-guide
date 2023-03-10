@@ -37,15 +37,19 @@ export class User extends Auditable {
     @Column("boolean", { name: "Confirmed", default: false, nullable: false })
     confirmed: boolean;
 
-    @OneToMany(() => General, (general) => general.user)
-    generals: General;
+    @OneToMany(() => General, (general) => general.user, { cascade: true })
+    generals: General[];
 
-    @OneToMany(() => Guide, (guide) => guide.user)
+    @OneToMany(() => Guide, (guide) => guide.user, { cascade: true })
     guides: Guide;
 
-    @OneToMany(() => GuidePoints, (guidePoints) => guidePoints.user)
+    @OneToMany(() => GuidePoints, (guidePoints) => guidePoints.user, {
+        cascade: true,
+    })
     guidePoints: GuidePoints[];
 
-    @OneToMany(() => FavouriteGuide, (favouriteGuide) => favouriteGuide.user)
+    @OneToMany(() => FavouriteGuide, (favouriteGuide) => favouriteGuide.user, {
+        cascade: true,
+    })
     favouriteGuide: FavouriteGuide[];
 }
