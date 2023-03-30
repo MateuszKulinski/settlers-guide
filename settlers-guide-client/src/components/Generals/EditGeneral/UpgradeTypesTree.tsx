@@ -10,14 +10,16 @@ import "./UpgradeTypesTree.css";
 import GeneralUpgradeTypeItem from "./UpgradeTypesTreeItem";
 
 const GetGeneralUpgradeTypes = gql`
-    query GetGeneralUpgradeTypes {
+    query EntityResult {
         getGeneralUpgradeTypes {
             ... on EntityResult {
                 messages
             }
-            ... on GeneralUpgradeType {
-                id
-                name
+            ... on GeneralUpgradeArrayType {
+                upgradeTypes {
+                    name
+                    id
+                }
             }
         }
     }
@@ -37,10 +39,10 @@ const UpgradeTypesTree: FC<UpgradeTypesTreeProps> = ({
     useEffect(() => {
         if (
             dataGeneralUpgradeTypes &&
-            dataGeneralUpgradeTypes.getGeneralUpgradeTypes
+            dataGeneralUpgradeTypes.getGeneralUpgradeTypes.upgradeTypes
         ) {
             const newContent =
-                dataGeneralUpgradeTypes.getGeneralUpgradeTypes.map(
+                dataGeneralUpgradeTypes.getGeneralUpgradeTypes.upgradeTypes.map(
                     (generalUpgradeType: GeneralUpgradeType) => {
                         const value = generalUpgrades
                             ? generalUpgrades.reduce((accumulator, item) => {

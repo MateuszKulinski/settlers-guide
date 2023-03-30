@@ -1,23 +1,26 @@
 import { Header } from "./components/layout/partials/header/Header";
 import Main from "./components/Main/Main";
+import Error from "./components/Error/Error";
 import React, { useEffect } from "react";
 import "./App.css";
 import useRefreshMe from "./hooks/useRefreshMe";
 import { useDispatch } from "react-redux";
 import { gql, useQuery } from "@apollo/client";
 import { AdventureCategorySetType } from "./store/categories/Reducer";
-import AddGuide from "./components/AddGuide/AddGuide";
+import AddGuide from "./components/Guides/AddGuide/AddGuide";
 import { Route, Routes } from "react-router-dom";
 import { Col, Container, Row } from "react-bootstrap";
 import {
     _URL_EDIT_GENERAL_,
     _URL_GENERALS_,
+    _URL_GUIDES_,
     _URL_HOME_,
     _URL_NEW_GENERAL_,
     _URL_NEW_GUIDE_,
 } from "./assets/consts";
 import EditGeneral from "./components/Generals/EditGeneral/EditGeneral";
 import GeneralsList from "./components/Generals/GeneralsList";
+import GuideList from "./components/Guides/GuideList";
 
 const GetAllAdventureCategories = gql`
     query {
@@ -25,12 +28,14 @@ const GetAllAdventureCategories = gql`
             ... on EntityResult {
                 messages
             }
-            ... on AdventureCategory {
-                id
-                name
-                adventures {
-                    name
+            ... on AdventureCategoryArray {
+                categories {
                     id
+                    name
+                    adventures {
+                        name
+                        id
+                    }
                 }
             }
         }
@@ -44,10 +49,13 @@ const App: React.FC = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (categoriesData && categoriesData.getAdventureCategories) {
+        if (
+            categoriesData &&
+            categoriesData.getAdventureCategories.categories
+        ) {
             dispatch({
                 type: AdventureCategorySetType,
-                payload: categoriesData.getAdventureCategories,
+                payload: categoriesData.getAdventureCategories.categories,
             });
         }
     });
@@ -64,6 +72,7 @@ const App: React.FC = () => {
                     <Routes>
                         <Route path={_URL_HOME_} element={<Main />} />
                         <Route path={_URL_NEW_GUIDE_} element={<AddGuide />} />
+                        <Route path={_URL_GUIDES_} element={<GuideList />} />
                         <Route
                             path={_URL_NEW_GENERAL_}
                             element={<EditGeneral />}
@@ -76,6 +85,7 @@ const App: React.FC = () => {
                             path={`${_URL_EDIT_GENERAL_}:generalId`}
                             element={<EditGeneral />}
                         />
+                        <Route path={_URL_NEW_GUIDE_} element={<Error />} />
                     </Routes>
                 </Row>
             </Container>

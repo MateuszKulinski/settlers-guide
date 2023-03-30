@@ -13,7 +13,7 @@ import React, { useState } from "react";
 import {
     _URL_FAVOURITES_,
     _URL_GENERALS_,
-    _URL_GUIDES,
+    _URL_GUIDES_,
     _URL_GUIDE_,
     _URL_HOME_,
     _URL_NEW_GENERAL_,
@@ -180,7 +180,7 @@ export const Header: React.FC = () => {
                                 </Nav.Link>
                                 <Nav.Link
                                     as={Link}
-                                    to={_URL_GUIDES}
+                                    to={_URL_GUIDES_}
                                     className="text-white"
                                 >
                                     <FontAwesomeIcon

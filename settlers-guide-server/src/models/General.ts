@@ -25,6 +25,12 @@ export class General extends BaseEntity {
     })
     name: string;
 
+    @Column("boolean", {
+        name: "Public",
+        default: false,
+    })
+    public: boolean;
+
     @ManyToOne(() => GeneralType, (generalType) => generalType.general)
     generalType: GeneralType;
 

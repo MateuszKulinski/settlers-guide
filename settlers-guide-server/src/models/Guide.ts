@@ -8,6 +8,7 @@ import {
     PrimaryGeneratedColumn,
 } from "typeorm";
 import { Auditable } from "./Auditable";
+import { Adventure } from "./Adventure";
 import { General } from "./General";
 import { GuideAttack } from "./GuideAttack";
 import { GuidePoints } from "./GuidePoints";
@@ -57,4 +58,7 @@ export class Guide extends Auditable {
 
     @OneToMany(() => GuideAttack, (guideAttack) => guideAttack.guide)
     attacks: GuideAttack;
+
+    @ManyToOne(() => Adventure, (adventure) => adventure.guides)
+    adventure: Adventure;
 }

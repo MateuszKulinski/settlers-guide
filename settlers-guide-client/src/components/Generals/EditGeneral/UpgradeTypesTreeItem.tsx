@@ -1,5 +1,9 @@
 import React, { FC, useEffect, useState } from "react";
-import { _API_VERSION_, _SERVER_URL_ } from "../../../assets/consts";
+import {
+    _API_VERSION_,
+    _MAX_GENENERAL_ITEM_,
+    _SERVER_URL_,
+} from "../../../assets/consts";
 import GeneralUpgradeType from "../../../model/GeneralUpgradeType";
 import { GeneralUpgradeTypeItemInterface } from "./EditGeneral";
 
@@ -17,8 +21,8 @@ const GeneralUpgradeTypeItem: FC<GeneralUpgradeTypeItemProps> = ({
     const [level, setLevel] = useState<number>(startValue);
 
     const handleUpgradeClick = () => {
-        const newLevel = level >= 3 ? 0 : level + 1;
-        level >= 3 ? setLevel(0) : setLevel(newLevel);
+        const newLevel = level >= _MAX_GENENERAL_ITEM_ ? 0 : level + 1;
+        level >= _MAX_GENENERAL_ITEM_ ? setLevel(0) : setLevel(newLevel);
         const newItem: GeneralUpgradeTypeItemInterface = {
             upgradeType: generalUpgradeType.id,
             level: newLevel,
@@ -31,14 +35,17 @@ const GeneralUpgradeTypeItem: FC<GeneralUpgradeTypeItemProps> = ({
     }, []);
 
     return (
-        <div onClick={handleUpgradeClick}>
+        <div
+            onClick={handleUpgradeClick}
+            className={`${level > 0 ? "boldItem" : "normalItem"}`}
+        >
             <img
                 src={`${_SERVER_URL_}/api/${_API_VERSION_}/img/GeneralUpgradeType/${generalUpgradeType.id}`}
                 alt={`${generalUpgradeType.name}`}
             />
             <div className="levelUpgradeContainer">
                 <span className="levelUpgrade">{level}</span>
-                <span className="levelUpgradeMax">{3}</span>
+                <span className="levelUpgradeMax">{_MAX_GENENERAL_ITEM_}</span>
             </div>
         </div>
     );

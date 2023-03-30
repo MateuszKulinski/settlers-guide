@@ -3,9 +3,11 @@ import {
     Column,
     Entity,
     ManyToOne,
+    OneToMany,
     PrimaryGeneratedColumn,
 } from "typeorm";
 import { AdventureCategory } from "./AdventureCategory";
+import { Guide } from "./Guide";
 
 @Entity({ name: "Adventure" })
 export class Adventure extends BaseEntity {
@@ -27,4 +29,7 @@ export class Adventure extends BaseEntity {
         (adventureCategory) => adventureCategory.adventures
     )
     adventuresCategory: AdventureCategory;
+
+    @OneToMany(() => Guide, (guide) => guide.adventure)
+    guides: Guide;
 }

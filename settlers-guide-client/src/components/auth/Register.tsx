@@ -249,21 +249,20 @@ export const Register: React.FC<ModalProps> = ({ isOpen, onClickToggle }) => {
                         <Row className="mt-2">
                             <Col xs={6}>
                                 <Button
-                                    variant="success"
-                                    onClick={handleOnSubmit}
-                                    disabled={!isSubmitDisabled}
-                                    style={{ width: "100%" }}
-                                >
-                                    Zarejestruj
-                                </Button>
-                            </Col>
-                            <Col xs={6}>
-                                <Button
                                     variant="danger"
                                     onClick={onClickCancel}
                                     style={{ width: "100%" }}
                                 >
                                     Anuluj
+                                </Button>
+                            </Col>
+                            <Col xs={6}>
+                                <Button
+                                    variant="success"
+                                    onClick={handleOnSubmit}
+                                    style={{ width: "100%" }}
+                                >
+                                    Zarejestruj
                                 </Button>
                             </Col>
                         </Row>

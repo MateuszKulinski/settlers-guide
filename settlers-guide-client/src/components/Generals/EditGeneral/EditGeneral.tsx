@@ -1,11 +1,13 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useReducer, useState } from "react";
 import { Button, Col, Form } from "react-bootstrap";
 import {
     _API_VERSION_,
     _CLASS_PADDING_,
     _CLASS_YELLOW_CONTAINER_,
+    _MAX_GENENERAL_ITEMS_SUM_,
     _SERVER_URL_,
+    _URL_ERROR_,
     _URL_GENERALS_,
     _URL_HOME_,
 } from "../../../assets/consts";
@@ -15,9 +17,10 @@ import UpgradeTypesTree from "./UpgradeTypesTree";
 import { useNavigate, useParams } from "react-router-dom";
 import General from "../../../model/General";
 import Loader from "../../Loader/Loader";
+import GeneralUpgradeType from "../../../model/GeneralUpgradeType";
 
 export interface GeneralUpgradeTypeItemInterface {
-    upgradeType: string;
+    upgradeType: string | GeneralUpgradeType;
     level: number;
 }
 
@@ -34,9 +37,11 @@ const GetGeneralTypes = gql`
             ... on EntityResult {
                 messages
             }
-            ... on GeneralType {
-                id
-                name
+            ... on GeneralTypeArray {
+                types {
+                    name
+                    id
+                }
             }
         }
     }
@@ -61,17 +66,22 @@ const SaveGeneral = gql`
 const GetMyGenerals = gql`
     query GetGenerals($id: ID!) {
         getGenerals(id: $id) {
-            ... on General {
-                name
-                id
-                generalType {
-                    id
+            ... on EntityResult {
+                messages
+            }
+            ... on GeneralArray {
+                generals {
                     name
-                }
-                upgrades {
-                    level
                     id
-                    upgradeType {
+                    upgrades {
+                        upgradeType {
+                            id
+                            name
+                        }
+                        level
+                        id
+                    }
+                    generalType {
                         name
                         id
                     }
@@ -81,6 +91,86 @@ const GetMyGenerals = gql`
     }
 `;
 
+function reducer(
+    state: {
+        upgradeTypes: GeneralUpgradeTypeItemInterface[];
+        totalLevel: number;
+    },
+    action: { type: string; payload: GeneralUpgradeTypeItemInterface[] }
+) {
+    switch (action.type) {
+        case "add":
+            const upgradeTypes = action.payload.map((item) => {
+                let upgradeTypeId = "";
+                if (
+                    typeof item.upgradeType !== "string" &&
+                    "id" in item.upgradeType
+                ) {
+                    upgradeTypeId = item.upgradeType.id;
+                } else {
+                    upgradeTypeId = item.upgradeType;
+                }
+                return {
+                    upgradeType: upgradeTypeId,
+                    level: item.level,
+                };
+            });
+
+            const sumAdd = upgradeTypes.reduce(
+                (accumulator, currentValue) => accumulator + currentValue.level,
+                0
+            );
+
+            return {
+                upgradeTypes: upgradeTypes,
+                totalLevel: sumAdd,
+            };
+        case "update":
+            const { upgradeType } = action.payload[0];
+            const { level } = action.payload[0];
+            const updatedGeneralUpgradeTypesWithLevel = state.upgradeTypes.map(
+                (item) => {
+                    if (item.upgradeType === upgradeType) {
+                        return {
+                            ...item,
+                            level: level,
+                        };
+                    }
+                    return item;
+                }
+            );
+
+            const isElementFound = updatedGeneralUpgradeTypesWithLevel.some(
+                (item) => item.upgradeType === upgradeType
+            );
+
+            if (!isElementFound) {
+                updatedGeneralUpgradeTypesWithLevel.push({
+                    upgradeType: upgradeType,
+                    level: level,
+                });
+            }
+
+            const sum = updatedGeneralUpgradeTypesWithLevel.reduce(
+                (accumulator, currentValue) => accumulator + currentValue.level,
+                0
+            );
+
+            return {
+                upgradeTypes: updatedGeneralUpgradeTypesWithLevel,
+                totalLevel: sum,
+            };
+
+        default:
+            return state;
+    }
+}
+
+const initialState = {
+    upgradeTypes: [],
+    totalLevel: 0,
+};
+
 const EditGeneral: FC = () => {
     const { generalId } = useParams();
     const { data: dataGeneral } = useQuery(GetMyGenerals, {
@@ -89,42 +179,27 @@ const EditGeneral: FC = () => {
     });
     const [general, setGeneral] = useState<General | undefined>(undefined);
     const [generalType, setGeneralType] = useState<any>();
-    const [generalUpgradeTypesWithLevel, setGeneralUpgradeTypesWithLevel] =
-        useState<GeneralUpgradeTypeItemInterface[]>([]);
-    const [generalName, setGeneralName] = useState("");
+    const [generalUpgradeTypesWithLevel, dispatch] = useReducer(
+        reducer,
+        initialState
+    );
+
+    const [generalName, setGeneralName] = useState<string>("");
     const [generalTypes, setGeneralTypes] = useState();
-    const [errorMsg, setErrorMsg] = useState("");
+    const [errorMsg, setErrorMsg] = useState<string>("");
     const { data: dataGeneralTypes } = useQuery(GetGeneralTypes);
     const [execSaveGeneral] = useMutation(SaveGeneral);
     const navigate = useNavigate();
-    const [shouldRender, setShouldRender] = useState(false);
+    const [shouldRender, setShouldRender] = useState<boolean>(false);
 
-    const handleUpgradeChange = (
+    const handleUpgradeChange = async (
         upgradeChanged: GeneralUpgradeTypeItemInterface
     ) => {
-        const updatedGeneralUpgradeTypesWithLevel =
-            generalUpgradeTypesWithLevel.map((item) => {
-                if (item.upgradeType === upgradeChanged.upgradeType) {
-                    return {
-                        ...item,
-                        level: upgradeChanged.level,
-                    };
-                }
-                return item;
-            });
-
-        const isElementFound = updatedGeneralUpgradeTypesWithLevel.some(
-            (item) => item.upgradeType === upgradeChanged.upgradeType
-        );
-
-        if (!isElementFound) {
-            updatedGeneralUpgradeTypesWithLevel.push({
-                upgradeType: upgradeChanged.upgradeType,
-                level: upgradeChanged.level,
-            });
-        }
-
-        setGeneralUpgradeTypesWithLevel(updatedGeneralUpgradeTypesWithLevel);
+        const newItem: GeneralUpgradeTypeItemInterface = {
+            upgradeType: upgradeChanged.upgradeType,
+            level: upgradeChanged.level,
+        };
+        dispatch({ type: "update", payload: [newItem] });
     };
 
     const [upgradesCategoryContent, setUpgradesCategoryContent] = useState(
@@ -132,26 +207,30 @@ const EditGeneral: FC = () => {
     );
 
     useEffect(() => {
-        const options = dataGeneralTypes?.getGeneralTypes.map(
+        const options = dataGeneralTypes?.getGeneralTypes.types.map(
             (item: GeneralType) => createTypeOption(item)
         );
-
         setGeneralTypes(options);
     }, [dataGeneralTypes]);
 
     useEffect(() => {
         if (generalId && dataGeneral && dataGeneral.getGenerals) {
-            const general = dataGeneral.getGenerals[0];
-            setGeneralName(general.name);
-            setGeneralType(createTypeOption(general.generalType));
-            setUpgradesCategoryContent(
-                <UpgradeTypesTree
-                    sendOutUpgradeItem={handleUpgradeChange}
-                    generalUpgrades={general?.upgrades}
-                />
-            );
-            setShouldRender(true);
-            setGeneral(general);
+            if (dataGeneral.getGenerals.messages) {
+                navigate(`${_URL_ERROR_}`, { replace: true });
+            } else if (dataGeneral.getGenerals.generals) {
+                const general = dataGeneral.getGenerals.generals[0];
+                dispatch({ type: "add", payload: general.upgrades });
+                setGeneralName(general.name);
+                setGeneralType(createTypeOption(general.generalType));
+                setUpgradesCategoryContent(
+                    <UpgradeTypesTree
+                        sendOutUpgradeItem={handleUpgradeChange}
+                        generalUpgrades={general?.upgrades}
+                    />
+                );
+                setShouldRender(true);
+                setGeneral(general);
+            }
         }
     }, [dataGeneral]);
 
@@ -191,7 +270,7 @@ const EditGeneral: FC = () => {
             generalId: generalId,
             name: generalName,
             generalType: generalType?.realValue,
-            upgrades: generalUpgradeTypesWithLevel,
+            upgrades: generalUpgradeTypesWithLevel.upgradeTypes,
         };
 
         const { data: createGeneralMsg } = await execSaveGeneral({
@@ -203,11 +282,17 @@ const EditGeneral: FC = () => {
             : navigate(`${_URL_GENERALS_}`);
     };
 
+    const goBack = () => {
+        navigate(`${_URL_GENERALS_}`, { replace: true });
+    };
+
     if (generalId && !shouldRender) {
         return <Loader />;
     }
+
     return (
         <Form>
+            {errorMsg}
             <Col
                 className={`${_CLASS_YELLOW_CONTAINER_} offset-md-3`}
                 md={6}
@@ -241,13 +326,23 @@ const EditGeneral: FC = () => {
                     ) : null}
                     <Form.Group>
                         <Form.Label>
-                            Wybierz ulepszenia
+                            Wybierz ulepszenia{" "}
+                            {generalUpgradeTypesWithLevel.totalLevel}/
+                            {_MAX_GENENERAL_ITEMS_SUM_}
                             {upgradesCategoryContent}
                         </Form.Label>
                     </Form.Group>
                 </Col>
             </Col>
-            <Col className="mt-2 offset-md-3 p-0" md={6} xs={12}>
+            <Col className="mt-2 offset-md-3 p-0 pb-3" md={6} xs={12}>
+                <Button
+                    variant="danger"
+                    onClick={goBack}
+                    style={{ width: "100%" }}
+                    className="mb-2"
+                >
+                    Cofnij
+                </Button>
                 <Button
                     variant="success"
                     onClick={handleOnSubmit}

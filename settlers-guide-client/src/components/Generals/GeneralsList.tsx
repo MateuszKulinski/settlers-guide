@@ -20,19 +20,24 @@ const DeleteGeneral = gql`
 const GetMyGenerals = gql`
     query General {
         getGenerals {
-            ... on General {
-                name
-                id
-                generalType {
-                    id
+            ... on EntityResult {
+                messages
+            }
+            ... on GeneralArray {
+                generals {
                     name
-                }
-                upgrades {
-                    level
                     id
-                    upgradeType {
-                        name
+                    generalType {
                         id
+                        name
+                    }
+                    upgrades {
+                        level
+                        id
+                        upgradeType {
+                            name
+                            id
+                        }
                     }
                 }
             }
@@ -65,25 +70,26 @@ const GeneralsList: FC = () => {
     };
 
     useEffect(() => {
-        if (dataGenerals && dataGenerals.getGenerals) {
-            setGenerals(dataGenerals.getGenerals);
+        if (dataGenerals && dataGenerals.getGenerals.generals) {
+            setGenerals(dataGenerals.getGenerals.generals);
         }
     }, [dataGenerals]);
 
     useEffect(() => {
-        if (generals && generals.length > 0) {
-            changeContent(generals);
-        }
+        changeContent(generals);
     }, [generals]);
 
     const changeContent = (generals: General[]) => {
-        const newContent = generals.map((general: General) => (
-            <GeneralsListItem
-                key={general.id}
-                general={general}
-                onDelete={onDelete}
-            />
-        ));
+        let newContent: React.ReactNode = <div>Brak generałów</div>;
+        if (generals && generals.length > 0) {
+            newContent = generals.map((general: General) => (
+                <GeneralsListItem
+                    key={general.id}
+                    general={general}
+                    onDelete={onDelete}
+                />
+            ));
+        }
         setContent(newContent);
     };
 

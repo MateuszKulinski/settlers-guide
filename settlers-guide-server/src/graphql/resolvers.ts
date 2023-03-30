@@ -22,6 +22,7 @@ import { GeneralUpgradeType } from "../models/GeneralUpgradeType";
 import { saveGeneral, getGenerals, deleteGeneral } from "../repo/GeneralRepo";
 import { saveGeneralUpgrade } from "../repo/GeneralUpgradeRepo";
 import { General } from "../models/General";
+import { addGuide } from "../repo/GuideRepo";
 
 const _STANDARD_ERROR_ = "An error has occurred";
 
@@ -33,7 +34,7 @@ const resolvers: IResolvers = {
     AdventureResult: {
         __resolveType(obj: any, context: GqlContext, info: any) {
             if (obj.messages) {
-                return "EntitiResult";
+                return "EntityResult";
             }
             return "Adventure";
         },
@@ -41,25 +42,33 @@ const resolvers: IResolvers = {
     AdventureCategoryResult: {
         __resolveType(obj: any, context: GqlContext, info: any) {
             if (obj.messages) {
-                return "EntitiResult";
+                return "EntityResult";
             }
             return "AdventureCategory";
         },
     },
-    GeneralTypeResult: {
+    AdventureCategoryArrayResult: {
         __resolveType(obj: any, context: GqlContext, info: any) {
             if (obj.messages) {
-                return "EntitiResult";
+                return "EntityResult";
             }
-            return "GeneralType";
+            return "AdventureCategoryArray";
         },
     },
-    GeneralUpgradeTypeResult: {
+    GeneralTypeArrayResult: {
         __resolveType(obj: any, context: GqlContext, info: any) {
             if (obj.messages) {
-                return "EntitiResult";
+                return "EntityResult";
             }
-            return "GeneralUpgradeType";
+            return "GeneralTypeArray";
+        },
+    },
+    GeneralUpgradeTypeArrayResult: {
+        __resolveType(obj: any, context: GqlContext, info: any) {
+            if (obj.messages) {
+                return "EntityResult";
+            }
+            return "GeneralUpgradeArrayType";
         },
     },
     UserResult: {
@@ -70,12 +79,12 @@ const resolvers: IResolvers = {
             return "User";
         },
     },
-    GeneralResult: {
+    GeneralArrayResult: {
         __resolveType(obj: any, context: GqlContext, info: any) {
             if (obj.messages) {
                 return "EntityResult";
             }
-            return "General";
+            return "GeneralArray";
         },
     },
     Query: {
@@ -107,12 +116,12 @@ const resolvers: IResolvers = {
             args: { id: string },
             ctx: GqlContext,
             info: any
-        ): Promise<Array<AdventureCategory> | EntityResult> => {
+        ): Promise<{ categories: Array<AdventureCategory> } | EntityResult> => {
             let adventureCategories: QueryArrayResult<AdventureCategory>;
             try {
                 adventureCategories = await getAdventureCategories();
                 if (adventureCategories.entities) {
-                    return adventureCategories.entities;
+                    return { categories: adventureCategories.entities };
                 }
 
                 return {
@@ -132,7 +141,7 @@ const resolvers: IResolvers = {
             args: { id: string },
             ctx: GqlContext,
             info: any
-        ): Promise<Array<General> | EntityResult> => {
+        ): Promise<{ generals: Array<General> } | EntityResult> => {
             let generals: QueryArrayResult<General>;
             try {
                 if (!ctx.req.session?.userId) {
@@ -142,7 +151,9 @@ const resolvers: IResolvers = {
                 generals = await getGenerals(args.id, ctx.req.session?.userId);
 
                 if (generals.entities) {
-                    return generals.entities;
+                    return {
+                        generals: generals.entities,
+                    };
                 }
 
                 return {
@@ -155,18 +166,17 @@ const resolvers: IResolvers = {
                 throw error;
             }
         },
-
         getGeneralTypes: async (
             obj: any,
             args: { id: string },
             ctx: GqlContext,
             info: any
-        ): Promise<Array<GeneralType> | EntityResult> => {
+        ): Promise<{ types: Array<GeneralType> } | EntityResult> => {
             let generalTypes: QueryArrayResult<GeneralType>;
             try {
                 generalTypes = await getGeneralTypes();
                 if (generalTypes.entities) {
-                    return generalTypes.entities;
+                    return { types: generalTypes.entities };
                 }
                 return {
                     messages: generalTypes.messages
@@ -183,12 +193,14 @@ const resolvers: IResolvers = {
             args: { id: string },
             ctx: GqlContext,
             info: any
-        ): Promise<Array<GeneralUpgradeType> | EntityResult> => {
+        ): Promise<
+            { upgradeTypes: Array<GeneralUpgradeType> } | EntityResult
+        > => {
             let generalUpgradeTypes: QueryArrayResult<GeneralUpgradeType>;
             try {
                 generalUpgradeTypes = await getGeneralUpgradeTypes();
                 if (generalUpgradeTypes.entities) {
-                    return generalUpgradeTypes.entities;
+                    return { upgradeTypes: generalUpgradeTypes.entities };
                 }
                 return {
                     messages: generalUpgradeTypes.messages
@@ -247,7 +259,7 @@ const resolvers: IResolvers = {
         ): Promise<string> => {
             try {
                 if (!ctx.req.session || !ctx.req.session!.userId) {
-                    return "Aby zmienić hasło, musisz się najpierw zalogować.";
+                    return "Zaloguj się przed dodaniem.";
                 }
 
                 const userId = ctx.req.session!.userId;
@@ -299,6 +311,41 @@ const resolvers: IResolvers = {
             }
         },
         //mutation general end
+        //mutation guides start
+        addGuide: async (
+            obj: any,
+            args: {
+                name: string;
+                description: string;
+                type: number;
+                adventureId: string;
+            },
+            ctx: GqlContext,
+            info: any
+        ): Promise<string> => {
+            try {
+                if (!ctx.req.session || !ctx.req.session!.userId) {
+                    return "Zaloguj się przed dodaniem.";
+                }
+
+                const userId = ctx.req.session!.userId;
+                const guide = await addGuide(
+                    userId,
+                    args.name,
+                    args.description,
+                    args.type,
+                    args.adventureId
+                );
+                if (guide.messages) return guide.messages[0];
+                if (!guide.entity) return _STANDARD_ERROR_;
+
+                return guide.entity.id;
+            } catch (error) {
+                console.log(error.message);
+                throw error;
+            }
+        },
+        //mutation guides end
         //mutation user start
         changePassword: async (
             obj: any,
