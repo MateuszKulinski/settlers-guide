@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import React, { FC, useEffect, useState } from "react";
 import { Button, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
@@ -10,7 +10,13 @@ import {
 } from "../../assets/consts";
 import { Guide } from "../../model/Guide";
 import Loader from "../Loader/Loader";
-import GuidesListItem from "./GuidesListItem";
+import GuidesListItem from "./GuideListItem/GuidesListItem";
+
+const DeleteGuide = gql`
+    mutation DeleteGuide($guideId: ID!) {
+        deleteGuide(guideId: $guideId)
+    }
+`;
 
 const GetMyGuides = gql`
     query Guides {
@@ -22,8 +28,12 @@ const GetMyGuides = gql`
                 guides {
                     id
                     name
+                    lastModifiedOn
                     adventure {
                         name
+                    }
+                    user {
+                        userName
                     }
                 }
             }
@@ -35,6 +45,7 @@ const GuideList: FC = () => {
     const { data: dataGuides } = useQuery(GetMyGuides, {
         fetchPolicy: "no-cache",
     });
+    const [execDeleteGuide] = useMutation(DeleteGuide);
     const [content, setContent] = useState<React.ReactNode>(<Loader />);
     const [guides, setGuides] = useState<Guide[]>([]);
 
@@ -49,22 +60,25 @@ const GuideList: FC = () => {
     }, [guides]);
 
     const onDelete = async (guideId: string) => {
-        // setContent(<Loader />);
-        // const { data: removedGeneral } = await execDeleteGeneral({
-        //     variables: { generalId: generalId },
-        // });
-        // if (removedGeneral.deleteGeneral === true) {
-        //     const newGenerals = generals.filter(
-        //         (general: General) => general.id !== generalId
-        //     );
-        //     setGenerals(newGenerals);
-        // } else {
-        //     changeContent(generals);
-        // }
+        setContent(<Loader />);
+        const { data: removedGuide } = await execDeleteGuide({
+            variables: { guideId: guideId },
+        });
+
+        if (removedGuide.deleteGuide === true) {
+            const newGenerals = guides.filter(
+                (guide: Guide) => guide.id !== guideId
+            );
+            setGuides(newGenerals);
+        } else {
+            changeContent(guides);
+        }
     };
 
     const changeContent = (guides: Guide[]) => {
-        let newContent: React.ReactNode = <div>Brak poradników</div>;
+        let newContent: React.ReactNode = (
+            <h5 className="emptyError">Brak poradników</h5>
+        );
         if (guides && guides.length > 0) {
             newContent = guides.map((guide: Guide) => (
                 <GuidesListItem

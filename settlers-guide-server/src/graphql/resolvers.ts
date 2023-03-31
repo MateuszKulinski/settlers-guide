@@ -22,7 +22,8 @@ import { GeneralUpgradeType } from "../models/GeneralUpgradeType";
 import { saveGeneral, getGenerals, deleteGeneral } from "../repo/GeneralRepo";
 import { saveGeneralUpgrade } from "../repo/GeneralUpgradeRepo";
 import { General } from "../models/General";
-import { addGuide } from "../repo/GuideRepo";
+import { addGuide, deleteGuide, getGuides } from "../repo/GuideRepo";
+import { Guide } from "../models/Guide";
 
 const _STANDARD_ERROR_ = "An error has occurred";
 
@@ -55,6 +56,14 @@ const resolvers: IResolvers = {
             return "AdventureCategoryArray";
         },
     },
+    GeneralArrayResult: {
+        __resolveType(obj: any, context: GqlContext, info: any) {
+            if (obj.messages) {
+                return "EntityResult";
+            }
+            return "GeneralArray";
+        },
+    },
     GeneralTypeArrayResult: {
         __resolveType(obj: any, context: GqlContext, info: any) {
             if (obj.messages) {
@@ -71,20 +80,20 @@ const resolvers: IResolvers = {
             return "GeneralUpgradeArrayType";
         },
     },
+    GuideArrayResult: {
+        __resolveType(obj: any, context: GqlContext, info: any) {
+            if (obj.messages) {
+                return "EntityResult";
+            }
+            return "GuideArray";
+        },
+    },
     UserResult: {
         __resolveType(obj: any, context: GqlContext, info: any) {
             if (obj.messages) {
                 return "EntityResult";
             }
             return "User";
-        },
-    },
-    GeneralArrayResult: {
-        __resolveType(obj: any, context: GqlContext, info: any) {
-            if (obj.messages) {
-                return "EntityResult";
-            }
-            return "GeneralArray";
         },
     },
     Query: {
@@ -213,6 +222,37 @@ const resolvers: IResolvers = {
             }
         },
         //query generals end
+        //query guide start
+        getGuides: async (
+            obj: any,
+            args: { id: string },
+            ctx: GqlContext,
+            info: any
+        ): Promise<{ guides: Array<Guide> } | EntityResult> => {
+            let guides: QueryArrayResult<Guide>;
+            try {
+                if (!ctx.req.session?.userId) {
+                    return { messages: ["Użytkownik nie jest zalogowany"] };
+                }
+
+                guides = await getGuides(args.id, ctx.req.session!.userId);
+                if (guides.entities) {
+                    return {
+                        guides: guides.entities,
+                    };
+                }
+
+                return {
+                    messages: guides.messages
+                        ? guides.messages
+                        : [_STANDARD_ERROR_],
+                };
+            } catch (error) {
+                console.log(error);
+                throw error;
+            }
+        },
+        //query guide end
         //query user start
         me: async (
             obj: any,
@@ -306,7 +346,7 @@ const resolvers: IResolvers = {
 
                 return deleteGeneral(args.generalId, ctx.req.session!.userId);
             } catch (error) {
-                console.log(error.message);
+                console.log(error);
                 throw error;
             }
         },
@@ -342,6 +382,23 @@ const resolvers: IResolvers = {
                 return guide.entity.id;
             } catch (error) {
                 console.log(error.message);
+                throw error;
+            }
+        },
+        deleteGuide: async (
+            obj: any,
+            args: { guideId: string },
+            ctx: GqlContext,
+            info: any
+        ): Promise<boolean> => {
+            try {
+                if (!ctx.req.session || !ctx.req.session!.userId) {
+                    return false;
+                }
+
+                return deleteGuide(args.guideId, ctx.req.session!.userId);
+            } catch (error) {
+                console.log(error);
                 throw error;
             }
         },

@@ -12,6 +12,7 @@ import { Route, Routes } from "react-router-dom";
 import { Col, Container, Row } from "react-bootstrap";
 import {
     _URL_EDIT_GENERAL_,
+    _URL_EDIT_GUIDE_,
     _URL_GENERALS_,
     _URL_GUIDES_,
     _URL_HOME_,
@@ -21,6 +22,7 @@ import {
 import EditGeneral from "./components/Generals/EditGeneral/EditGeneral";
 import GeneralsList from "./components/Generals/GeneralsList";
 import GuideList from "./components/Guides/GuideList";
+import EditGuide from "./components/Guides/EditGuide/EditGuide";
 
 const GetAllAdventureCategories = gql`
     query {
@@ -72,6 +74,10 @@ const App: React.FC = () => {
                     <Routes>
                         <Route path={_URL_HOME_} element={<Main />} />
                         <Route path={_URL_NEW_GUIDE_} element={<AddGuide />} />
+                        <Route
+                            path={`${_URL_EDIT_GUIDE_}:guideId`}
+                            element={<EditGuide />}
+                        />
                         <Route path={_URL_GUIDES_} element={<GuideList />} />
                         <Route
                             path={_URL_NEW_GENERAL_}

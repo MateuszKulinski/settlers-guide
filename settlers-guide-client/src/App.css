@@ -10,6 +10,8 @@
     --border-radius: 20px;
 
     --margin-mid: 20px;
+
+    --error-color: rgb(168, 0, 0);
 }
 
 body {
@@ -28,6 +30,10 @@ body {
 
 a {
     text-decoration: none !important;
+}
+
+.yellowContainer {
+    position: relative;
 }
 
 .yellowContainer > * {
@@ -53,4 +59,12 @@ a {
     align-items: center;
     justify-content: center;
     height: 240px;
+}
+
+.emptyError {
+    color: var(--error-color);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
 }

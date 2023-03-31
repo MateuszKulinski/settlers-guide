@@ -5,6 +5,7 @@ const typeDefs = `#graphql
   union AdventureCategoryResult = AdventureCategory | EntityResult
   union AdventureCategoryArrayResult = AdventureCategoryArray | EntityResult
   union GeneralArrayResult = GeneralArray | EntityResult
+  union GuideArrayResult = GuideArray | EntityResult
   union GeneralTypeArrayResult = GeneralTypeArray | EntityResult
   union GeneralUpgradeTypeArrayResult = GeneralUpgradeArrayType | EntityResult
   union UserResult = User | EntityResult
@@ -15,6 +16,10 @@ const typeDefs = `#graphql
 
   type GeneralArray {
     generals: [General!]
+  }  
+
+  type GuideArray {
+    guides: [Guide!]
   }
 
   type GeneralTypeArray{
@@ -39,6 +44,16 @@ const typeDefs = `#graphql
     id: ID!
     name: String!
     adventures: [Adventure!]
+  }
+
+  type Guide{
+    id: String!
+    name: String!
+    description: String
+    type: Int!
+    adventure: Adventure!
+    lastModifiedOn: Date!
+    user: User
   }
 
   type General{
@@ -85,6 +100,7 @@ const typeDefs = `#graphql
     getGeneralTypes: GeneralTypeArrayResult!
     getGenerals(id:ID): GeneralArrayResult!
     getGeneralUpgradeTypes: GeneralUpgradeTypeArrayResult!
+    getGuides(id:ID): GuideArrayResult!
   }
   
   type Mutation {
@@ -101,6 +117,7 @@ const typeDefs = `#graphql
       adventureId: ID!
     ): String!
     deleteGeneral(generalId: ID!): Boolean
+    deleteGuide(guideId: ID!): Boolean
     changePassword(newPassword: String, oldPassword: String): String!
     login(email: String, password: String): String!
     logout(email: String): String!

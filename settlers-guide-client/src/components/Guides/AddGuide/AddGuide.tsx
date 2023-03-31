@@ -13,11 +13,18 @@ import AdventureCategory from "../../../model/AdventureCategory";
 import { AppState } from "../../../store/AppState";
 import Select, { SingleValue } from "react-select";
 import "./AddGuide.css";
-import { Guide } from "../../../model/Guide";
 import GuideDescription from "../GuideDescription";
 import GuideType from "../GuideType";
 import { gql, useMutation } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
+
+export interface AddGuideInterface {
+    name: string;
+    adventureId: number;
+    type: number;
+    description: string;
+    id?: string;
+}
 
 const AddGuideGQL = gql`
     mutation AddGuide(
@@ -134,13 +141,13 @@ const AddGuide: FC = () => {
             (item) => item.id === adventure.realValue
         );
         if (newGuideCategory && newGuideAdventure) {
-            const newGuide: Guide = {
+            const newGuide: AddGuideInterface = {
                 name: guideName,
                 description,
                 type,
                 adventureId: parseInt(newGuideAdventure?.id),
             };
-            console.log(newGuide);
+
             const { data: newGuideMsg } = await execAddGuideGQL({
                 variables: { ...newGuide },
             });

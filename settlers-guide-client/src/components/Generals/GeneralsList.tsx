@@ -80,7 +80,9 @@ const GeneralsList: FC = () => {
     }, [generals]);
 
     const changeContent = (generals: General[]) => {
-        let newContent: React.ReactNode = <div>Brak generałów</div>;
+        let newContent: React.ReactNode = (
+            <h5 className="emptyError">Brak generałów</h5>
+        );
         if (generals && generals.length > 0) {
             newContent = generals.map((general: General) => (
                 <GeneralsListItem

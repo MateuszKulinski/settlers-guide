@@ -1,12 +1,14 @@
 import Adventure from "./Adventure";
-import AdventureCategory from "./AdventureCategory";
+import User from "./User";
 
 export class Guide {
     constructor(
         public name: string,
-        public adventureId: number,
+        public adventure: Adventure,
         public type: number,
         public description: string,
-        public id?: string
+        public id?: string,
+        public lastModifiedOn?: string,
+        public user?: User
     ) {}
 }

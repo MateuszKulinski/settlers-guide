@@ -16,3 +16,6 @@
 .generalItem h6 {
     margin-bottom: 0;
 }
+.guideListDataContainer span {
+    font-size: 11px;
+}

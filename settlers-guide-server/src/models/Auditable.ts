@@ -13,5 +13,5 @@ export class Auditable extends BaseEntity {
         default: () => `now()`,
         nullable: false,
     })
-    LastModifiedOn: Date;
+    lastModifiedOn: Date;
 }
