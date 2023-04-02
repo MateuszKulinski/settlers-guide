@@ -5,34 +5,51 @@ import { User } from "../models/User";
 
 export const getGenerals = async (
     id: string,
-    userId: string
+    userId: string,
+    withPublic: boolean
 ): Promise<QueryArrayResult<General>> => {
     const user = await User.findOne({
         where: {
             id: userId,
         },
     });
-    const generals = id
-        ? await General.createQueryBuilder("general")
-              .leftJoinAndSelect("general.upgrades", "generalUpgrade")
-              .leftJoinAndSelect(
-                  "generalUpgrade.upgradeType",
-                  "generalUpgradeType"
-              )
-              .leftJoinAndSelect("general.generalType", "generalType")
-              .where({ user, id })
-              .orderBy("general.id", "ASC")
-              .getMany()
-        : await General.createQueryBuilder("general")
-              .leftJoinAndSelect("general.upgrades", "generalUpgrade")
-              .leftJoinAndSelect(
-                  "generalUpgrade.upgradeType",
-                  "generalUpgradeType"
-              )
-              .leftJoinAndSelect("general.generalType", "generalType")
-              .where({ user })
-              .orderBy("general.id", "ASC")
-              .getMany();
+    let generals: General[];
+
+    if (withPublic) {
+        generals = await General.createQueryBuilder("general")
+            .leftJoinAndSelect("general.upgrades", "generalUpgrade")
+            .leftJoinAndSelect(
+                "generalUpgrade.upgradeType",
+                "generalUpgradeType"
+            )
+            .leftJoinAndSelect("general.generalType", "generalType")
+            .where({ user })
+            .orWhere("general.public = true")
+            .orderBy("general.id", "ASC")
+            .getMany();
+    } else if (id) {
+        generals = await General.createQueryBuilder("general")
+            .leftJoinAndSelect("general.upgrades", "generalUpgrade")
+            .leftJoinAndSelect(
+                "generalUpgrade.upgradeType",
+                "generalUpgradeType"
+            )
+            .leftJoinAndSelect("general.generalType", "generalType")
+            .where({ user, id })
+            .orderBy("general.id", "ASC")
+            .getMany();
+    } else {
+        generals = await General.createQueryBuilder("general")
+            .leftJoinAndSelect("general.upgrades", "generalUpgrade")
+            .leftJoinAndSelect(
+                "generalUpgrade.upgradeType",
+                "generalUpgradeType"
+            )
+            .leftJoinAndSelect("general.generalType", "generalType")
+            .where({ user })
+            .orderBy("general.id", "ASC")
+            .getMany();
+    }
 
     if (!generals || generals.length === 0) {
         return { messages: ["Nie można pobrać generałów"] };

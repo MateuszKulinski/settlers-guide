@@ -10,6 +10,10 @@ import typeDefs from "./graphql/typeDefs";
 import resolvers from "./graphql/resolvers";
 import AppDataSource from "./DataSource";
 import path from "path";
+import multer from "multer";
+import { addGuideImage, createImagePath } from "./repo/ImageRepo";
+import fs from "fs";
+
 require("dotenv").config();
 
 declare global {
@@ -29,6 +33,9 @@ declare module "express-session" {
 }
 
 const main = async () => {
+    const storage = multer.memoryStorage();
+    const upload = multer({ storage });
+
     const app = express();
     const _PORT_ = process.env.APP_PORT;
     const _SERVER_URL_ = String(process.env.SERVER_URL);
@@ -83,15 +90,45 @@ const main = async () => {
 
     app.use(express.static("public"));
 
-    app.get(`/api/${process.env.API_VERSION}/img/:type/:id`, (req, res) => {
-        const imagePath = path.join(
-            __dirname,
-            "/img/",
-            `${req.params.type}`,
-            `${req.params.id}.png`
-        );
-        res.sendFile(imagePath);
-    });
+    app.get(
+        `/api/${process.env.API_VERSION}/img/:type/:id`,
+        async (req, res) => {
+            const { type, id } = req.params;
+            const imagePath = await createImagePath(type, id, __dirname);
+            try {
+                if (!fs.existsSync(imagePath)) {
+                    res.sendFile(path.join(__dirname, "/img/no-image.png"));
+                } else {
+                    res.sendFile(imagePath);
+                }
+            } catch (err) {
+                console.error(err);
+                res.status(500).send("Błąd serwera");
+            }
+        }
+    );
+
+    app.post(
+        `/api/${process.env.API_VERSION}/upload-file/:type`,
+        upload.single("file"),
+        async (req, res) => {
+            try {
+                const data = await addGuideImage(
+                    Number(req.params.type),
+                    req.file
+                );
+                res.setHeader("Access-Control-Allow-Origin", "*");
+                res.setHeader(
+                    "Access-Control-Allow-Headers",
+                    "Origin, X-Requested-With, Content-Type, Accept"
+                );
+
+                res.status(200).json(data);
+            } catch (err) {
+                res.status(500).json({ error: err.message });
+            }
+        }
+    );
 
     app.listen({ port: _PORT_ }, () => {
         console.log(

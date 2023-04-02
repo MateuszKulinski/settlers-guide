@@ -1,5 +1,6 @@
 import Adventure from "./Adventure";
 import User from "./User";
+import Image from "./Image";
 
 export class Guide {
     constructor(
@@ -9,6 +10,7 @@ export class Guide {
         public description: string,
         public id?: string,
         public lastModifiedOn?: string,
-        public user?: User
+        public user?: User,
+        public image?: Image
     ) {}
 }

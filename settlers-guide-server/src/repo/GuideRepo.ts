@@ -41,7 +41,10 @@ export const addGuide = async (
     };
 };
 
-export const deleteGuide = async (guideId: string, userId: string) => {
+export const deleteGuide = async (
+    guideId: string,
+    userId: string
+): Promise<boolean> => {
     const guide = await Guide.createQueryBuilder("guide")
         .leftJoinAndSelect("guide.user", "user")
         .where("guide.id = :guideId", { guideId })
@@ -64,18 +67,21 @@ export const getGuides = async (
             id: userId,
         },
     });
+
     const guides = id
         ? await Guide.createQueryBuilder("guide")
               .leftJoinAndSelect("guide.adventure", "adventure")
+              .leftJoinAndSelect("guide.image", "image")
               .leftJoin("guide.user", "user")
-              .select(["guide", "adventure", "user.userName"])
+              .select(["guide", "adventure", "user.userName", "image"])
               .where({ user, id })
               .orderBy("guide.id", "ASC")
               .getMany()
         : await Guide.createQueryBuilder("guide")
               .leftJoinAndSelect("guide.adventure", "adventure")
+              .leftJoinAndSelect("guide.image", "image")
               .leftJoin("guide.user", "user")
-              .select(["guide", "adventure", "user.userName"])
+              .select(["guide", "adventure", "user.userName", "image"])
               .where({ user })
               .orderBy("guide.id", "ASC")
               .getMany();
@@ -83,7 +89,6 @@ export const getGuides = async (
     if (!guides || guides.length === 0) {
         return { messages: ["Nie można pobrać poradników"] };
     }
-
     return {
         entities: guides,
     };

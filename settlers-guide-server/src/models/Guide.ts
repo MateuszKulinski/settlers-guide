@@ -5,6 +5,7 @@ import {
     ManyToMany,
     ManyToOne,
     OneToMany,
+    OneToOne,
     PrimaryGeneratedColumn,
 } from "typeorm";
 import { Auditable } from "./Auditable";
@@ -13,6 +14,7 @@ import { General } from "./General";
 import { GuideAttack } from "./GuideAttack";
 import { GuidePoints } from "./GuidePoints";
 import { User } from "./User";
+import { Image } from "./Image";
 
 @Entity({ name: "Guide" })
 export class Guide extends Auditable {
@@ -61,4 +63,9 @@ export class Guide extends Auditable {
 
     @ManyToOne(() => Adventure, (adventure) => adventure.guides)
     adventure: Adventure;
+
+    @OneToOne(() => Image, (image) => image.guide, {
+        nullable: true,
+    })
+    image: Image;
 }

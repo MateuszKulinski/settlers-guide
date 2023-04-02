@@ -6,6 +6,7 @@ import {
     _CLASS_PADDING_,
     _CLASS_YELLOW_CONTAINER_,
     _SERVER_URL_,
+    _URL_EDIT_GUIDE_,
     _URL_GUIDES_,
 } from "../../../assets/consts";
 import Adventure from "../../../model/Adventure";
@@ -154,7 +155,7 @@ const AddGuide: FC = () => {
 
             isNaN(parseInt(newGuideMsg.addGuide, 10))
                 ? setErrorMsg(newGuideMsg)
-                : navigate(`${_URL_GUIDES_}`);
+                : navigate(`${_URL_EDIT_GUIDE_}${newGuideMsg.addGuide}`);
         }
     };
 

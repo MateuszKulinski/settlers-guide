@@ -24,6 +24,7 @@ import { saveGeneralUpgrade } from "../repo/GeneralUpgradeRepo";
 import { General } from "../models/General";
 import { addGuide, deleteGuide, getGuides } from "../repo/GuideRepo";
 import { Guide } from "../models/Guide";
+import { joinItemImage, removeImage } from "../repo/ImageRepo";
 
 const _STANDARD_ERROR_ = "An error has occurred";
 
@@ -147,7 +148,7 @@ const resolvers: IResolvers = {
         //query generals start
         getGenerals: async (
             obj: any,
-            args: { id: string },
+            args: { id: string; withPublic: boolean },
             ctx: GqlContext,
             info: any
         ): Promise<{ generals: Array<General> } | EntityResult> => {
@@ -157,7 +158,11 @@ const resolvers: IResolvers = {
                     return { messages: ["Użytkownik nie jest zalogowany"] };
                 }
 
-                generals = await getGenerals(args.id, ctx.req.session?.userId);
+                generals = await getGenerals(
+                    args.id,
+                    ctx.req.session?.userId,
+                    args.withPublic
+                );
 
                 if (generals.entities) {
                     return {
@@ -403,6 +408,52 @@ const resolvers: IResolvers = {
             }
         },
         //mutation guides end
+        //mutation image start
+        joinItemImage: async (
+            obj: any,
+            args: { type: number; itemId: string; imgId: string },
+            ctx: GqlContext,
+            info: any
+        ): Promise<boolean> => {
+            try {
+                if (!ctx.req.session || !ctx.req.session!.userId) {
+                    return false;
+                }
+
+                return joinItemImage(
+                    args.type,
+                    args.itemId,
+                    args.imgId,
+                    ctx.req.session.userId
+                );
+            } catch (error) {
+                console.log(error);
+                throw error;
+            }
+        },
+        removeImage: async (
+            obj: any,
+            args: { type: number; itemId: string; imgId: string },
+            ctx: GqlContext,
+            info: any
+        ): Promise<boolean> => {
+            try {
+                if (!ctx.req.session || !ctx.req.session!.userId) {
+                    return false;
+                }
+
+                return removeImage(
+                    args.type,
+                    args.itemId,
+                    args.imgId,
+                    ctx.req.session.userId
+                );
+            } catch (error) {
+                console.log(error);
+                throw error;
+            }
+        },
+        //mutation image end
         //mutation user start
         changePassword: async (
             obj: any,
