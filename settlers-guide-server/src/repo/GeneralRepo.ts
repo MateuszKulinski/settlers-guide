@@ -1,18 +1,15 @@
+import { getUser } from "../cammon/Tools";
 import { QueryArrayResult, QueryOneResult } from "../graphql/QueryArrayResult";
 import { General } from "../models/General";
 import { GeneralType } from "../models/GeneralType";
-import { User } from "../models/User";
 
 export const getGenerals = async (
     id: string,
     userId: string,
     withPublic: boolean
 ): Promise<QueryArrayResult<General>> => {
-    const user = await User.findOne({
-        where: {
-            id: userId,
-        },
-    });
+    const user = await getUser(userId);
+
     let generals: General[];
 
     if (withPublic) {
@@ -25,7 +22,7 @@ export const getGenerals = async (
             .leftJoinAndSelect("general.generalType", "generalType")
             .where({ user })
             .orWhere("general.public = true")
-            .orderBy("general.id", "ASC")
+            .orderBy("general.public, general.id", "ASC")
             .getMany();
     } else if (id) {
         generals = await General.createQueryBuilder("general")
@@ -50,7 +47,7 @@ export const getGenerals = async (
             .orderBy("general.id", "ASC")
             .getMany();
     }
-
+    console.log(generals);
     if (!generals || generals.length === 0) {
         return { messages: ["Nie można pobrać generałów"] };
     }
@@ -72,11 +69,7 @@ export const saveGeneral = async (
         },
     });
 
-    const user = await User.findOne({
-        where: {
-            id: userId,
-        },
-    });
+    const user = await getUser(userId);
 
     if (!generalType || !user) return { messages: ["Błąd dodawania generała"] };
     let general: General | null;

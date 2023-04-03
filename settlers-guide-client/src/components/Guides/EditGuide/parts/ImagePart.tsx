@@ -10,7 +10,7 @@ interface ImagePartProps {
     itemId: string;
     type: number;
     image: Image | undefined;
-    onUpdatePhoto: () => void;
+    onUpdate: () => void;
 }
 
 const JoinItemImage = gql`
@@ -29,7 +29,7 @@ const ImagePart: FC<ImagePartProps> = ({
     itemId,
     type,
     image,
-    onUpdatePhoto,
+    onUpdate: onUpdatePhoto,
 }) => {
     const [file, setFile] = useState<File>();
     const [message, setMessage] = useState<string>("");

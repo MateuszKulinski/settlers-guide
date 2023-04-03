@@ -22,7 +22,13 @@ import { GeneralUpgradeType } from "../models/GeneralUpgradeType";
 import { saveGeneral, getGenerals, deleteGeneral } from "../repo/GeneralRepo";
 import { saveGeneralUpgrade } from "../repo/GeneralUpgradeRepo";
 import { General } from "../models/General";
-import { addGuide, deleteGuide, getGuides } from "../repo/GuideRepo";
+import {
+    addGuide,
+    deleteGuide,
+    getGuides,
+    saveGuideGeneral,
+    // saveGuideGeneral,
+} from "../repo/GuideRepo";
 import { Guide } from "../models/Guide";
 import { joinItemImage, removeImage } from "../repo/ImageRepo";
 
@@ -55,6 +61,14 @@ const resolvers: IResolvers = {
                 return "EntityResult";
             }
             return "AdventureCategoryArray";
+        },
+    },
+    SaveResult: {
+        __resolveType(obj: any, context: GqlContext, info: any) {
+            if (obj.message) {
+                return "EntityResult";
+            }
+            return "BooleanResult";
         },
     },
     GeneralArrayResult: {
@@ -407,6 +421,38 @@ const resolvers: IResolvers = {
                 throw error;
             }
         },
+        changeGuideGeneral: async (
+            obj: any,
+            args: { generalId: string; guideId: string; checked: boolean },
+            ctx: GqlContext,
+            info: any
+        ): Promise<{ data: boolean } | EntityResult> => {
+            try {
+                if (!ctx.req.session?.userId) {
+                    return { messages: ["Użytkownik nie jest zalogowany"] };
+                }
+
+                const saveGuideGeneralResult = await saveGuideGeneral(
+                    args.generalId,
+                    args.guideId,
+                    args.checked,
+                    ctx.req.session!.userId
+                );
+
+                if (saveGuideGeneralResult.entity) {
+                    return { data: saveGuideGeneralResult.entity };
+                }
+
+                return {
+                    messages: saveGuideGeneralResult.messages
+                        ? saveGuideGeneralResult.messages
+                        : [_STANDARD_ERROR_],
+                };
+            } catch (error) {
+                console.log(error);
+                throw error;
+            }
+        },
         //mutation guides end
         //mutation image start
         joinItemImage: async (
@@ -467,13 +513,11 @@ const resolvers: IResolvers = {
                 }
 
                 const id = ctx.req.session!.userId;
-                let result = await changePassword(
+                return await changePassword(
                     id,
                     args.newPassword,
                     args.oldPassword
                 );
-
-                return result;
             } catch (error) {
                 console.log(error.message);
                 throw error;

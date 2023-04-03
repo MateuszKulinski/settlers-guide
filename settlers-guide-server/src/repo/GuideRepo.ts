@@ -1,7 +1,9 @@
+import AppDataSource from "../DataSource";
+import { getUser } from "../cammon/Tools";
 import { QueryArrayResult, QueryOneResult } from "../graphql/QueryArrayResult";
 import { Adventure } from "../models/Adventure";
+import { General } from "../models/General";
 import { Guide } from "../models/Guide";
-import { User } from "../models/User";
 
 export const addGuide = async (
     userId: string,
@@ -16,11 +18,7 @@ export const addGuide = async (
         },
     });
 
-    const user = await User.findOne({
-        where: {
-            id: userId,
-        },
-    });
+    const user = await getUser(userId);
 
     if (!adventure || !user) return { messages: ["Błąd dodawania poradnika"] };
     let guide: Guide | null;
@@ -62,26 +60,36 @@ export const getGuides = async (
     id: string,
     userId: string
 ): Promise<QueryArrayResult<Guide>> => {
-    const user = await User.findOne({
-        where: {
-            id: userId,
-        },
-    });
+    const user = await getUser(userId);
 
     const guides = id
         ? await Guide.createQueryBuilder("guide")
               .leftJoinAndSelect("guide.adventure", "adventure")
               .leftJoinAndSelect("guide.image", "image")
+              .leftJoinAndSelect("guide.generals", "general")
               .leftJoin("guide.user", "user")
-              .select(["guide", "adventure", "user.userName", "image"])
+              .select([
+                  "guide",
+                  "adventure",
+                  "user.userName",
+                  "image",
+                  "general",
+              ])
               .where({ user, id })
               .orderBy("guide.id", "ASC")
               .getMany()
         : await Guide.createQueryBuilder("guide")
               .leftJoinAndSelect("guide.adventure", "adventure")
               .leftJoinAndSelect("guide.image", "image")
+              .leftJoinAndSelect("guide.generals", "general")
               .leftJoin("guide.user", "user")
-              .select(["guide", "adventure", "user.userName", "image"])
+              .select([
+                  "guide",
+                  "adventure",
+                  "user.userName",
+                  "image",
+                  "general",
+              ])
               .where({ user })
               .orderBy("guide.id", "ASC")
               .getMany();
@@ -92,4 +100,59 @@ export const getGuides = async (
     return {
         entities: guides,
     };
+};
+
+export const saveGuideGeneral = async (
+    generalId: string,
+    guideId: string,
+    checked: boolean,
+    userId: string
+): Promise<QueryOneResult<boolean>> => {
+    const guide = await Guide.findOne({
+        where: {
+            id: guideId,
+            user: {
+                id: userId,
+            },
+        },
+        relations: ["generals"],
+    });
+
+    if (!(guide instanceof Guide))
+        return { messages: ["Nie jesteś właścicielem poradnika"] };
+
+    const general = await General.findOne({
+        where: [
+            {
+                id: generalId,
+                user: {
+                    id: userId,
+                },
+            },
+            {
+                id: generalId,
+                public: true,
+            },
+        ],
+    });
+
+    if (!(general instanceof General))
+        return { messages: ["Nie jesteś właścicielem generała"] };
+
+    if (checked) {
+        guide.generals = guide.generals.length
+            ? [...guide.generals, general]
+            : [general];
+        guide.save();
+        return { entity: true };
+    }
+    await AppDataSource.createQueryBuilder()
+        .delete()
+        .from("GuideGeneral")
+        .where("guideId = :guideId AND generalId = :generalId", {
+            guideId,
+            generalId,
+        })
+        .execute();
+    return { entity: true };
 };

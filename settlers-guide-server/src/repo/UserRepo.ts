@@ -5,6 +5,7 @@ import {
     isPasswordValid,
     isValidUserName,
 } from "../cammon/validators/PasswordValidator";
+import { getUser } from "../cammon/Tools";
 
 const _SALT_ROUNDS_ = 10;
 const _USER_ERROR_CONFIRMATION_ =
@@ -16,13 +17,11 @@ export class UserResult {
 }
 
 export const changePassword = async (
-    id: string,
+    userId: string,
     newPassword: string,
     oldPassword: string
 ): Promise<string> => {
-    const user = await User.findOne({
-        where: { id },
-    });
+    const user = await getUser(userId);
 
     if (!user) {
         return _USER_ERROR_NOT_FOUND_;
@@ -87,10 +86,8 @@ export const logout = async (email: string): Promise<string> => {
     return "Użytkownik został wylogowany.";
 };
 
-export const me = async (id: string): Promise<UserResult> => {
-    const user = await User.findOne({
-        where: { id },
-    });
+export const me = async (userId: string): Promise<UserResult> => {
+    const user = await getUser(userId);
 
     if (!user) {
         return {

@@ -51,7 +51,15 @@ export class Guide extends Auditable {
 
     @ManyToMany(() => General)
     @JoinTable({
-        name: "GuideGenerals",
+        name: "GuideGeneral",
+        joinColumn: {
+            name: "guideId",
+            referencedColumnName: "id",
+        },
+        inverseJoinColumn: {
+            name: "generalId",
+            referencedColumnName: "id",
+        },
     })
     generals: General[];
 

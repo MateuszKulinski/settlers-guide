@@ -33,6 +33,9 @@ const GetMyGuides = gql`
                         id
                         fileName
                     }
+                    generals {
+                        id
+                    }
                 }
             }
         }
@@ -81,10 +84,13 @@ const EditGuide: FC = () => {
                             itemId={guideId}
                             type={0}
                             image={guide.image}
-                            onUpdatePhoto={onUpdatePhoto}
+                            onUpdate={onUpdatePhoto}
                         />
 
-                        <GeneralsListPart />
+                        <GeneralsListPart
+                            guide={guide}
+                            onUpdate={onUpdatePhoto}
+                        />
                     </Col>
                 </Col>
             )}

@@ -9,9 +9,20 @@ const typeDefs = `#graphql
   union GeneralTypeArrayResult = GeneralTypeArray | EntityResult
   union GeneralUpgradeTypeArrayResult = GeneralUpgradeArrayType | EntityResult
   union UserResult = User | EntityResult
+  union SaveResult = BooleanResult | EntityResult
 
   type EntityResult {
-      messages: [String!]
+    messages: [String!]
+  }
+
+  type BooleanResult {
+      data: Boolean!
+  }
+
+  type GuideGeneral {
+    generalId: ID!
+    guideId: ID!
+    checked: Boolean!
   }
 
   type GeneralArray {
@@ -66,6 +77,7 @@ const typeDefs = `#graphql
     lastModifiedOn: Date!
     user: User
     image: Image
+    generals: [General]
   }
 
   type General{
@@ -129,10 +141,11 @@ const typeDefs = `#graphql
       type: Int!
       adventureId: ID!
     ): String!
-    joinItemImage(type: Int!, itemId: String!, imgId: String!): Boolean
-    removeImage(type: Int!, itemId: String!, imgId: String!): Boolean
-    deleteGeneral(generalId: ID!): Boolean
-    deleteGuide(guideId: ID!): Boolean
+    changeGuideGeneral(generalId: ID!, guideId: ID!, checked: Boolean): SaveResult!
+    joinItemImage(type: Int!, itemId: String!, imgId: String!): Boolean!
+    removeImage(type: Int!, itemId: String!, imgId: String!): Boolean!
+    deleteGeneral(generalId: ID!): Boolean!
+    deleteGuide(guideId: ID!): Boolean!
     changePassword(newPassword: String, oldPassword: String): String!
     login(email: String, password: String): String!
     logout(email: String): String!
