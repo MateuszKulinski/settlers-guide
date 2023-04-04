@@ -11,6 +11,8 @@ import { formatDate } from "../../../common/dates";
 import ImagePart from "./parts/ImagePart";
 import "./EditGuide.css";
 import GeneralsListPart from "./parts/GeneralsListPart";
+import GuideType from "../GuideType";
+import GuideDescription from "../GuideDescription";
 
 const GetMyGuides = gql`
     query Guides($id: ID!) {
@@ -23,6 +25,8 @@ const GetMyGuides = gql`
                     id
                     name
                     lastModifiedOn
+                    type
+                    description
                     adventure {
                         name
                     }
@@ -60,7 +64,7 @@ const EditGuide: FC = () => {
         }
     }, [dataGuides]);
 
-    const onUpdatePhoto = () => {
+    const refetchGuide = () => {
         refetch();
     };
 
@@ -80,16 +84,22 @@ const EditGuide: FC = () => {
                                 {formatDate(guide.lastModifiedOn)}
                             </span>
                         </div>
+                        <GuideDescription
+                            value={guide.description}
+                            guideId={guideId}
+                            onChange={refetchGuide}
+                        />
+                        <GuideType startValue={guide.type} guideId={guideId} />
                         <ImagePart
                             itemId={guideId}
                             type={0}
                             image={guide.image}
-                            onUpdate={onUpdatePhoto}
+                            onUpdate={refetchGuide}
                         />
 
                         <GeneralsListPart
                             guide={guide}
-                            onUpdate={onUpdatePhoto}
+                            onUpdate={refetchGuide}
                         />
                     </Col>
                 </Col>

@@ -26,6 +26,7 @@ import {
     addGuide,
     deleteGuide,
     getGuides,
+    saveGuide,
     saveGuideGeneral,
     // saveGuideGeneral,
 } from "../repo/GuideRepo";
@@ -446,6 +447,42 @@ const resolvers: IResolvers = {
                 return {
                     messages: saveGuideGeneralResult.messages
                         ? saveGuideGeneralResult.messages
+                        : [_STANDARD_ERROR_],
+                };
+            } catch (error) {
+                console.log(error);
+                throw error;
+            }
+        },
+        saveGuide: async (
+            obj: any,
+            args: {
+                guideId: string;
+                description: string;
+                type: number;
+            },
+            ctx: GqlContext,
+            info: any
+        ): Promise<{ data: boolean } | EntityResult> => {
+            try {
+                if (!ctx.req.session?.userId) {
+                    return { messages: ["Użytkownik nie jest zalogowany"] };
+                }
+
+                const saveGuideResult = await saveGuide(
+                    args.guideId,
+                    ctx.req.session!.userId,
+                    args.description,
+                    args.type
+                );
+
+                if (saveGuideResult.entity) {
+                    return { data: saveGuideResult.entity };
+                }
+
+                return {
+                    messages: saveGuideResult.messages
+                        ? saveGuideResult.messages
                         : [_STANDARD_ERROR_],
                 };
             } catch (error) {

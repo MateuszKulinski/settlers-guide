@@ -65,6 +65,7 @@ const GeneralsListPart: FC<GeneralsListParttProps> = ({ guide, onUpdate }) => {
                 ) ?? false;
             return (
                 <GeneralsListPartItem
+                    key={general.id}
                     guideId={guide.id ?? ``}
                     general={general}
                     checkedOnStart={checked}

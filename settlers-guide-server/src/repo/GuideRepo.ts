@@ -94,12 +94,39 @@ export const getGuides = async (
               .orderBy("guide.id", "ASC")
               .getMany();
 
-    if (!guides || guides.length === 0) {
+    if (!guides || guides.length === 0)
         return { messages: ["Nie można pobrać poradników"] };
-    }
+
     return {
         entities: guides,
     };
+};
+
+export const saveGuide = async (
+    guideId: string,
+    userId: string,
+    description: string | undefined,
+    type: number | undefined
+): Promise<QueryOneResult<boolean>> => {
+    const guide = await Guide.findOne({
+        where: {
+            id: guideId,
+            user: {
+                id: userId,
+            },
+        },
+    });
+
+    if (!guide) return { messages: ["Nie można pobrać poradników"] };
+
+    if (description) guide.description = description;
+
+    if (type !== undefined) {
+        guide.type = type;
+    }
+
+    guide.save();
+    return { entity: true };
 };
 
 export const saveGuideGeneral = async (
@@ -118,8 +145,7 @@ export const saveGuideGeneral = async (
         relations: ["generals"],
     });
 
-    if (!(guide instanceof Guide))
-        return { messages: ["Nie jesteś właścicielem poradnika"] };
+    if (!guide) return { messages: ["Nie można pobrać poradników"] };
 
     const general = await General.findOne({
         where: [

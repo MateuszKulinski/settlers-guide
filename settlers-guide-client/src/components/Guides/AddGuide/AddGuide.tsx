@@ -95,8 +95,8 @@ const AddGuide: FC = () => {
         };
     };
 
-    const handleDescriptionChange = (description: string) => {
-        setDescription(description);
+    const handleDescriptionChange = (description: string | undefined) => {
+        if (description) setDescription(description);
     };
 
     const handleTypeChange = (type: number) => {
@@ -204,7 +204,7 @@ const AddGuide: FC = () => {
                         onChange={handleDescriptionChange}
                         value={description}
                     />
-                    <GuideType onChange={handleTypeChange} value={type} />
+                    <GuideType onChange={handleTypeChange} startValue={type} />
                 </Col>
             </Col>
             <Row className="mt-2">

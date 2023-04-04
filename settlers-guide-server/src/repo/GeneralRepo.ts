@@ -47,7 +47,7 @@ export const getGenerals = async (
             .orderBy("general.id", "ASC")
             .getMany();
     }
-    console.log(generals);
+
     if (!generals || generals.length === 0) {
         return { messages: ["Nie można pobrać generałów"] };
     }

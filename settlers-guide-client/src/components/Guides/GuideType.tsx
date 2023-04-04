@@ -1,13 +1,22 @@
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import { Form } from "react-bootstrap";
 import Select from "react-select";
+import useUpdateGuide from "../../hooks/useUpdateGuide";
 
 interface GuideDescriptionProps {
-    value?: number;
-    onChange: (value: number) => void;
+    guideId?: string;
+    startValue: number;
+    onChange?: (value: number) => void;
 }
 
-const GuideType: FC<GuideDescriptionProps> = ({ value, onChange }) => {
+const GuideType: FC<GuideDescriptionProps> = ({
+    guideId,
+    startValue,
+    onChange,
+}) => {
+    const [value, setValue] = useState<number>(startValue);
+    const saveGuide = useUpdateGuide();
+
     const options = [
         { value: 1, label: "Prywatny" },
         { value: 2, label: "Znajomi" },
@@ -15,22 +24,29 @@ const GuideType: FC<GuideDescriptionProps> = ({ value, onChange }) => {
     ];
 
     const handleChange = (selectedOption: any) => {
-        const value = selectedOption ? selectedOption.value : undefined;
-        onChange(value);
+        const newValue = selectedOption ? selectedOption.value : undefined;
+        if (onChange) {
+            onChange(newValue);
+        } else if (guideId) {
+            setValue(newValue);
+            saveGuide(guideId, undefined, newValue);
+        }
     };
 
     return (
         <Form.Group>
-            <Form.Label>Twój opis</Form.Label>
-            <Select
-                value={
-                    value
-                        ? options.find((option) => option.value === value)
-                        : null
-                }
-                onChange={handleChange}
-                options={options}
-            />
+            <Form.Label>
+                Widoczność
+                <Select
+                    value={
+                        value
+                            ? options.find((option) => option.value === value)
+                            : null
+                    }
+                    onChange={handleChange}
+                    options={options}
+                />
+            </Form.Label>
         </Form.Group>
     );
 };

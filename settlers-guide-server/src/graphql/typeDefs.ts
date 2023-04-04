@@ -141,6 +141,11 @@ const typeDefs = `#graphql
       type: Int!
       adventureId: ID!
     ): String!
+    saveGuide(
+      guideId: ID!
+      description: String
+      type: Int
+    ): SaveResult!
     changeGuideGeneral(generalId: ID!, guideId: ID!, checked: Boolean): SaveResult!
     joinItemImage(type: Int!, itemId: String!, imgId: String!): Boolean!
     removeImage(type: Int!, itemId: String!, imgId: String!): Boolean!
