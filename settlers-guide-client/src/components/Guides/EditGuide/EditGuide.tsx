@@ -13,6 +13,7 @@ import "./EditGuide.css";
 import GeneralsListPart from "./parts/GeneralsListPart";
 import GuideType from "../GuideType";
 import GuideDescription from "../GuideDescription";
+import AttackListPartProp from "./parts/AttacksListPart";
 
 const GetMyGuides = gql`
     query Guides($id: ID!) {
@@ -101,6 +102,8 @@ const EditGuide: FC = () => {
                             guide={guide}
                             onUpdate={refetchGuide}
                         />
+
+                        <AttackListPartProp guide={guide} />
                     </Col>
                 </Col>
             )}

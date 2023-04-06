@@ -9,6 +9,7 @@ import App from "./App";
 import configureStore from "./store/configureStore";
 import { _SERVER_URL_ } from "./assets/consts";
 import Helmet from "react-helmet";
+import "babel-polyfill";
 
 const client = new ApolloClient({
     uri: `${_SERVER_URL_}/settlersGuideServer`,

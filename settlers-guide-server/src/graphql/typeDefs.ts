@@ -5,11 +5,22 @@ const typeDefs = `#graphql
   union AdventureCategoryResult = AdventureCategory | EntityResult
   union AdventureCategoryArrayResult = AdventureCategoryArray | EntityResult
   union GeneralArrayResult = GeneralArray | EntityResult
-  union GuideArrayResult = GuideArray | EntityResult
   union GeneralTypeArrayResult = GeneralTypeArray | EntityResult
   union GeneralUpgradeTypeArrayResult = GeneralUpgradeArrayType | EntityResult
-  union UserResult = User | EntityResult
+  union GuideArrayResult = GuideArray | EntityResult
   union SaveResult = BooleanResult | EntityResult
+  union UnitsResult = UnitsArray | EntityResult
+  union UserResult = User | EntityResult
+
+  type UnitsArray {
+    units: [Unit!]
+    bandits: [Unit!]
+  }
+
+  type Unit {
+    id: ID!
+    name: String!
+  }
 
   type EntityResult {
     messages: [String!]
@@ -126,6 +137,8 @@ const typeDefs = `#graphql
     getGenerals(id:ID, withPublic:Boolean): GeneralArrayResult!
     getGeneralUpgradeTypes: GeneralUpgradeTypeArrayResult!
     getGuides(id:ID): GuideArrayResult!
+    getUnits(id:ID): UnitsResult!
+    getBandits(id:ID): UnitsResult!
   }
   
   type Mutation {

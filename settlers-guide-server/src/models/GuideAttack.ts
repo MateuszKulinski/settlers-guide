@@ -29,6 +29,18 @@ export class GuideAttack extends BaseEntity {
     })
     army: string;
 
+    @Column({
+        name: "Camp",
+        type: "text",
+    })
+    camp: number;
+
+    @Column({
+        name: "description",
+        type: "text",
+    })
+    description: string;
+
     @ManyToOne(() => Guide, (guide) => guide.attacks)
     guide: Guide;
 

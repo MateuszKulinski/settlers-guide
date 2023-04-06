@@ -32,6 +32,10 @@ import {
 } from "../repo/GuideRepo";
 import { Guide } from "../models/Guide";
 import { joinItemImage, removeImage } from "../repo/ImageRepo";
+import { Bandit } from "../models/Bandit";
+import { getBandits } from "../repo/BanditRepo";
+import { Unit } from "../models/Unit";
+import { getUnits } from "../repo/UnitRepo";
 
 const _STANDARD_ERROR_ = "An error has occurred";
 
@@ -70,6 +74,14 @@ const resolvers: IResolvers = {
                 return "EntityResult";
             }
             return "BooleanResult";
+        },
+    },
+    UnitsResult: {
+        __resolveType(obj: any, context: GqlContext, info: any) {
+            if (obj.messages) {
+                return "EntityResult";
+            }
+            return "UnitsArray";
         },
     },
     GeneralArrayResult: {
@@ -113,6 +125,53 @@ const resolvers: IResolvers = {
         },
     },
     Query: {
+        //query army start
+        getBandits: async (
+            obj: any,
+            args: { id: string },
+            ctx: GqlContext,
+            info: any
+        ): Promise<{ bandits: Array<Bandit> } | EntityResult> => {
+            let bandits: QueryArrayResult<Bandit>;
+            try {
+                bandits = await getBandits(args.id);
+                console.log("B");
+
+                if (bandits.entities) return { bandits: bandits.entities };
+
+                return {
+                    messages: bandits.messages
+                        ? bandits.messages
+                        : [_STANDARD_ERROR_],
+                };
+            } catch (error) {
+                console.log(error);
+                throw error;
+            }
+        },
+        getUnits: async (
+            obj: any,
+            args: { id: string },
+            ctx: GqlContext,
+            info: any
+        ): Promise<{ units: Array<Unit> } | EntityResult> => {
+            let units: QueryArrayResult<Unit>;
+            try {
+                units = await getUnits(args.id);
+                console.log("A");
+                if (units.entities) return { units: units.entities };
+
+                return {
+                    messages: units.messages
+                        ? units.messages
+                        : [_STANDARD_ERROR_],
+                };
+            } catch (error) {
+                console.log(error);
+                throw error;
+            }
+        },
+        //query army end
         //query categories start
         getAdventureCategory: async (
             obj: any,
