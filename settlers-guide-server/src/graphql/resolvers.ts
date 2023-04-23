@@ -135,8 +135,6 @@ const resolvers: IResolvers = {
             let bandits: QueryArrayResult<Bandit>;
             try {
                 bandits = await getBandits(args.id);
-                console.log("B");
-
                 if (bandits.entities) return { bandits: bandits.entities };
 
                 return {
@@ -158,7 +156,6 @@ const resolvers: IResolvers = {
             let units: QueryArrayResult<Unit>;
             try {
                 units = await getUnits(args.id);
-                console.log("A");
                 if (units.entities) return { units: units.entities };
 
                 return {

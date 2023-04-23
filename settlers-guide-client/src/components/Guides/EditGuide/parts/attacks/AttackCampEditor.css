@@ -1,0 +1,42 @@
+.unitContainer {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 3px;
+}
+
+.unitsContainer {
+    display: flex;
+    gap: 10px;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.campContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 5px;
+    padding: 5px;
+    border: 1px solid var(--gold);
+    border-radius: var(--border-radius);
+}
+
+.unitContainer img {
+    width: 20px !important;
+}
+
+.unitsSelect {
+    min-width: 200px;
+}
+.attackBtn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}

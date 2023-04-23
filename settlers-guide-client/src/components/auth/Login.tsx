@@ -109,27 +109,31 @@ export const Login: React.FC<ModalProps> = ({ isOpen, onClickToggle }) => {
             <Form>
                 {resultMsg && <Alert variant="danger">{resultMsg}</Alert>}
                 <Form.Group className="col-xs-12">
-                    <Form.Label>E-mail</Form.Label>
-                    <Form.Control
-                        name="email"
-                        type="email"
-                        value={email}
-                        onChange={handleOnChange}
-                        isValid={!emailError}
-                    ></Form.Control>
+                    <Form.Label>
+                        E-mail
+                        <Form.Control
+                            name="email"
+                            type="email"
+                            value={email}
+                            onChange={handleOnChange}
+                            isValid={!emailError}
+                        ></Form.Control>
+                    </Form.Label>
                     <Form.Control.Feedback type="invalid">
                         {emailError}
                     </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group className="col-xs-12">
-                    <Form.Label>Hasło</Form.Label>
-                    <Form.Control
-                        name="password"
-                        type="password"
-                        value={password}
-                        onChange={handleOnChange}
-                        isValid={!passwordError}
-                    ></Form.Control>
+                    <Form.Label>
+                        Hasło
+                        <Form.Control
+                            name="password"
+                            type="password"
+                            value={password}
+                            onChange={handleOnChange}
+                            isValid={!passwordError}
+                        ></Form.Control>
+                    </Form.Label>
                     <Form.Control.Feedback type="invalid">
                         {passwordError}
                     </Form.Control.Feedback>

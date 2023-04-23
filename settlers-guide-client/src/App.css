@@ -16,7 +16,7 @@
 
 body {
     background-color: var(--bg-body);
-    overflow-y: scroll;
+    overflow-y: scroll !important;
     font-family: "Roboto";
 }
 
@@ -67,4 +67,32 @@ a {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+}
+
+.inputs100 input {
+    max-width: 100px !important;
+}
+
+.inputs60 input {
+    max-width: 60px !important;
+}
+
+.pb-150 {
+    padding-bottom: 150px;
+}
+.unitsSelect {
+    position: absolute;
+    z-index: 1;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.flex-right {
+    text-align: right;
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: column;
+    align-items: flex-end;
 }

@@ -5,9 +5,8 @@ export default class GuideAttack {
     constructor(
         public guideId: string,
         public opponents: GuideAttackOpponent[],
-        public army: GuideAttackArmy[],
+        public attacks: GuideAttackArmy[],
         public description: string,
-        public camp: number,
-        public attackId?: string
+        public campId?: string
     ) {}
 }

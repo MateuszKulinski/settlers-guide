@@ -195,53 +195,61 @@ export const Register: React.FC<ModalProps> = ({ isOpen, onClickToggle }) => {
                 {!isSubmitResponsePositive ? (
                     <>
                         <Form.Group>
-                            <Form.Label>E-mail</Form.Label>
-                            <Form.Control
-                                name="email"
-                                type="email"
-                                value={email}
-                                onChange={handleOnChange}
-                                isValid={!emailError}
-                            ></Form.Control>
+                            <Form.Label>
+                                E-mail
+                                <Form.Control
+                                    name="email"
+                                    type="email"
+                                    value={email}
+                                    onChange={handleOnChange}
+                                    isValid={!emailError}
+                                ></Form.Control>
+                            </Form.Label>
                             <Form.Control.Feedback type="invalid">
                                 {emailError}
                             </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group>
-                            <Form.Label>Nazwa użytkownika</Form.Label>
-                            <Form.Control
-                                name="userName"
-                                type="text"
-                                value={userName}
-                                onChange={handleOnChange}
-                                isValid={!userNameError}
-                            ></Form.Control>
+                            <Form.Label>
+                                Nazwa użytkownika
+                                <Form.Control
+                                    name="userName"
+                                    type="text"
+                                    value={userName}
+                                    onChange={handleOnChange}
+                                    isValid={!userNameError}
+                                ></Form.Control>
+                            </Form.Label>
                             <Form.Control.Feedback type="invalid">
                                 {userNameError}
                             </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group className="col-xs-12">
-                            <Form.Label>Hasło</Form.Label>
-                            <Form.Control
-                                name="password"
-                                type="password"
-                                value={password}
-                                onChange={handleOnChange}
-                                isValid={!passwordError}
-                            ></Form.Control>
+                            <Form.Label>
+                                Hasło
+                                <Form.Control
+                                    name="password"
+                                    type="password"
+                                    value={password}
+                                    onChange={handleOnChange}
+                                    isValid={!passwordError}
+                                ></Form.Control>
+                            </Form.Label>
                             <Form.Control.Feedback type="invalid">
                                 {passwordError}
                             </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group className="col-xs-12">
-                            <Form.Label>Powtórz hasło</Form.Label>
-                            <Form.Control
-                                name="passwordConfirmation"
-                                type="password"
-                                value={passwordConfirmation}
-                                onChange={handleOnChange}
-                                isValid={!passwordConfirmationError}
-                            ></Form.Control>
+                            <Form.Label>
+                                Powtórz hasło
+                                <Form.Control
+                                    name="passwordConfirmation"
+                                    type="password"
+                                    value={passwordConfirmation}
+                                    onChange={handleOnChange}
+                                    isValid={!passwordConfirmationError}
+                                ></Form.Control>
+                            </Form.Label>
                             <Form.Control.Feedback type="invalid">
                                 {passwordConfirmationError}
                             </Form.Control.Feedback>
