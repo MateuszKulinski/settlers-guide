@@ -93,7 +93,7 @@ const campReducer = (state: CampState, action: CampAction) => {
                 return { ...state };
             } else {
                 currentWave.items.splice(unitIndex, 1);
-                return { ...state, waves: [...state.waves] };
+                return { ...state, waves: [...updatedWaves] };
             }
         }
         default:
