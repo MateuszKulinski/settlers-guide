@@ -1,8 +1,8 @@
 import { gql, useMutation } from "@apollo/client";
 import React, { FC, useState } from "react";
 import { Col, Form } from "react-bootstrap";
-import General from "../../../../model/General";
-import { _API_VERSION_, _SERVER_URL_ } from "../../../../assets/consts";
+import General from "../../../../../model/General";
+import { _API_VERSION_, _SERVER_URL_ } from "../../../../../assets/consts";
 
 interface GeneralsListParttProps {
     general: General;

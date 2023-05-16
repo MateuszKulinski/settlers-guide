@@ -2,9 +2,12 @@ import React, { FC, useRef, useState } from "react";
 import UnitBandit from "../../../../../model/UnitBandit";
 import { NumericFormat } from "react-number-format";
 import Select, { SingleValue } from "react-select";
-import { _API_VERSION_, _SERVER_URL_ } from "../../../../../assets/consts";
+import {
+    _API_VERSION_,
+    _GENERATE_UNIQUE_ID_,
+    _SERVER_URL_,
+} from "../../../../../assets/consts";
 import GuideAttackUnit from "../../../../../model/GuideAttackUnit";
-import { generateUniqueId } from "./AttackCampEditor";
 import GuideAttackOpponent from "../../../../../model/GuideAttackOpponent";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinusCircle } from "@fortawesome/free-solid-svg-icons";
@@ -34,7 +37,7 @@ const AttackUnits: FC<AttackUnitsProps> = ({
               return {
                   value: item.name,
                   realValue: item.id,
-                  keyValue: generateUniqueId(),
+                  keyValue: _GENERATE_UNIQUE_ID_(),
                   label: (
                       <div className="selectContainer">
                           <span>

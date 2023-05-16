@@ -25,3 +25,17 @@ export const _LOADER_COLOR_ = "#fff";
 
 export const _MAX_GENENERAL_ITEM_ = 3;
 export const _MAX_GENENERAL_ITEMS_SUM_ = 21;
+
+export const _GENERATE_UNIQUE_ID_ = (): string => {
+    const randomChars =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const idLength = 8;
+    let id = "";
+    for (let i = 0; i < idLength; i++) {
+        id += randomChars.charAt(
+            Math.floor(Math.random() * randomChars.length)
+        );
+    }
+
+    return id;
+};

@@ -4,17 +4,25 @@ import GuideAttackUnit from "../../../../../model/GuideAttackUnit";
 import AttackUnits from "./AttackUnits";
 import { faMinusSquare, faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { generateUniqueId } from "./AttackCampEditor";
 import { Button } from "react-bootstrap";
+import { _GENERATE_UNIQUE_ID_ } from "../../../../../assets/consts";
 
 interface AttackWaveProp {
     waveId: string;
     types: UnitBandit[];
     isBandits: boolean;
-    saveAttack: (data: GuideAttackUnit, waveId: string) => void;
-    removeWave: (waveId: string) => void;
-    addUnit: (waveId: string, data: GuideAttackUnit) => void;
-    removeUnit: (waveId: string, unitId: string) => void;
+    saveAttack: (
+        waveId: string,
+        data: GuideAttackUnit,
+        isBandits: boolean
+    ) => void;
+    removeWave: (waveId: string, isBandits: boolean) => void;
+    addUnit: (
+        waveId: string,
+        data: GuideAttackUnit,
+        isBandits: boolean
+    ) => void;
+    removeUnit: (waveId: string, unitId: string, isBandits: boolean) => void;
     items?: GuideAttackUnit[];
 }
 
@@ -31,21 +39,21 @@ const AttackWave: FC<AttackWaveProp> = ({
     const handleRemoveWave = (
         e: React.MouseEvent<HTMLButtonElement, MouseEvent>
     ) => {
-        removeWave(waveId);
+        removeWave(waveId, isBandits);
     };
     const sendWave = (data: GuideAttackUnit) => {
-        saveAttack(data, waveId);
+        saveAttack(waveId, data, isBandits);
     };
 
     const handleAddItems = (
         e: React.MouseEvent<HTMLButtonElement, MouseEvent>
     ) => {
-        const newItem = new GuideAttackUnit(generateUniqueId(), 0, 0);
-        addUnit(waveId, newItem);
+        const newItem = new GuideAttackUnit(_GENERATE_UNIQUE_ID_(), 0, 0);
+        addUnit(waveId, newItem, isBandits);
     };
 
     const removeUnitItem = (unitId: string) => {
-        removeUnit(waveId, unitId);
+        removeUnit(waveId, unitId, isBandits);
     };
 
     return (

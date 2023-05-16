@@ -10,7 +10,7 @@ import { Guide } from "../../../model/Guide";
 import { formatDate } from "../../../common/dates";
 import ImagePart from "./parts/ImagePart";
 import "./EditGuide.css";
-import GeneralsListPart from "./parts/GeneralsListPart";
+import GeneralsListPart from "./parts/generals/GeneralsListPart";
 import GuideType from "../GuideType";
 import GuideDescription from "../GuideDescription";
 import AttackListPart from "./parts/attacks/AttacksListPart";

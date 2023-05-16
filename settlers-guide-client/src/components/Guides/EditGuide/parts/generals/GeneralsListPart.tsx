@@ -1,10 +1,10 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useQuery } from "@apollo/client";
 import React, { FC, useEffect, useState } from "react";
-import { Button, Col, Form, Row } from "react-bootstrap";
-import General from "../../../../model/General";
-import Loader from "../../../Loader/Loader";
-import { _API_VERSION_, _SERVER_URL_ } from "../../../../assets/consts";
-import { Guide } from "../../../../model/Guide";
+import { Button, Row } from "react-bootstrap";
+import General from "../../../../../model/General";
+import Loader from "../../../../Loader/Loader";
+import { _API_VERSION_, _SERVER_URL_ } from "../../../../../assets/consts";
+import { Guide } from "../../../../../model/Guide";
 import GeneralsListPartItem from "./GeneralsListPartItem";
 
 const GetMyGenerals = gql`
@@ -35,12 +35,12 @@ const GetMyGenerals = gql`
     }
 `;
 
-interface GeneralsListParttProps {
+interface GeneralsListPartProps {
     guide: Guide;
     onUpdate: () => void;
 }
 
-const GeneralsListPart: FC<GeneralsListParttProps> = ({ guide, onUpdate }) => {
+const GeneralsListPart: FC<GeneralsListPartProps> = ({ guide, onUpdate }) => {
     const [show, setShow] = useState<boolean>(false);
     const [generals, setGenerals] = useState<General[]>([]);
     const [content, setContent] = useState<React.ReactNode>(<Loader />);
