@@ -15,6 +15,13 @@
     flex-wrap: wrap;
 }
 
+.editCampContainer {
+    background-color: var(--gold);
+    margin-top: 10px;
+    width: 100%;
+    color: #fff;
+}
+
 .campContainer {
     display: flex;
     align-items: center;
@@ -24,7 +31,7 @@
     gap: 10px;
     margin-bottom: 5px;
     padding: 5px;
-    border: 1px solid var(--gold);
+    border: 1px solid var(--bg-column);
     border-radius: var(--border-radius);
 }
 
@@ -35,8 +42,25 @@
 .unitsSelect {
     min-width: 200px;
 }
+
 .attackBtn {
     display: flex;
     align-items: center;
     gap: 10px;
+}
+
+.attackSelectGeneralContainer {
+    z-index: 2;
+}
+
+.errorMessage {
+    color: #fff;
+    background: red;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 5px;
+    margin: 5px 0;
+    border-radius: 5px;
+    text-align: center;
+    border: 1px solid red;
 }

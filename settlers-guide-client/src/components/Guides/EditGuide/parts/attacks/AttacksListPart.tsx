@@ -4,9 +4,13 @@ import { Button } from "react-bootstrap";
 import { gql, useQuery } from "@apollo/client";
 import UnitBandit from "../../../../../model/UnitBandit";
 import AttackCampEditor from "./AttackCampEditor";
+import General from "../../../../../model/General";
+import GuideCampView from "../../../ViewGuide/GuideCampView";
+import GuideCamp from "../../../../../model/GuideCamp";
 
 interface AttackListPartProp {
     guide: Guide;
+    generals: General[];
 }
 
 const GetBandits = gql`
@@ -41,9 +45,8 @@ const GetUnits = gql`
     }
 `;
 
-const AttackListPart: FC<AttackListPartProp> = ({ guide }) => {
+const AttackListPart: FC<AttackListPartProp> = ({ guide, generals }) => {
     const [show, setShow] = useState<boolean>(true);
-    const [content, setContent] = useState<string>("");
 
     const { data: dataBandits } = useQuery(GetBandits, {
         fetchPolicy: "no-cache",
@@ -54,6 +57,8 @@ const AttackListPart: FC<AttackListPartProp> = ({ guide }) => {
     });
     const [bandits, setBandits] = useState<UnitBandit[]>();
     const [units, setUnits] = useState<UnitBandit[]>();
+    const [campsContent, setCampsContent] = useState<React.ReactNode>(<></>);
+    const [active, setActive] = useState<number>(0);
 
     useEffect(() => {
         if (dataBandits && dataBandits.getBandits?.bandits) {
@@ -66,6 +71,23 @@ const AttackListPart: FC<AttackListPartProp> = ({ guide }) => {
             setUnits(dataUnits.getUnits.units);
         }
     }, [dataUnits]);
+
+    useEffect(() => {
+        if (bandits && units && guide.id && guide.attacks) {
+            const content = guide.attacks.map((attack: GuideCamp) => (
+                <GuideCampView key={guide.id} attack={attack} />
+                // <AttackCampEditor
+                //     key={guide.id}
+                //     guideId={guide.id as string}
+                //     generals={generals}
+                //     banditTypes={bandits}
+                //     unitTypes={units}
+                //     attack={attack}
+                // />
+            ));
+            if (content) setCampsContent(content);
+        }
+    }, [bandits, units]);
 
     return (
         <div id="showHideContainer">
@@ -87,10 +109,15 @@ const AttackListPart: FC<AttackListPartProp> = ({ guide }) => {
                 }`}
             >
                 {/* <AttacksListPartItem /> */}
-                {bandits && units ? (
-                    <AttackCampEditor banditTypes={bandits} unitTypes={units} />
+                {campsContent}
+                {bandits && units && guide.id ? (
+                    <AttackCampEditor
+                        guideId={guide.id}
+                        generals={generals}
+                        banditTypes={bandits}
+                        unitTypes={units}
+                    />
                 ) : null}
-                {content}
             </div>
         </div>
     );

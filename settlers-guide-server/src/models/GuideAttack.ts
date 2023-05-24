@@ -31,12 +31,18 @@ export class GuideAttack extends BaseEntity {
 
     @Column({
         name: "Camp",
-        type: "text",
+        type: "int",
     })
     camp: number;
 
     @Column({
-        name: "description",
+        name: "Garrison",
+        type: "int",
+    })
+    garrison: number;
+
+    @Column({
+        name: "Description",
         type: "text",
     })
     description: string;

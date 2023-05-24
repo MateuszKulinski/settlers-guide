@@ -6,6 +6,8 @@ import { faMinusSquare, faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button } from "react-bootstrap";
 import { _GENERATE_UNIQUE_ID_ } from "../../../../../assets/consts";
+import AttackGeneral from "./AttackGeneral";
+import General from "../../../../../model/General";
 
 interface AttackWaveProp {
     waveId: string;
@@ -24,6 +26,8 @@ interface AttackWaveProp {
     ) => void;
     removeUnit: (waveId: string, unitId: string, isBandits: boolean) => void;
     items?: GuideAttackUnit[];
+    generals?: General[];
+    changeGeneral?: (generalId: string, waveId: string) => void;
 }
 
 const AttackWave: FC<AttackWaveProp> = ({
@@ -35,6 +39,8 @@ const AttackWave: FC<AttackWaveProp> = ({
     addUnit,
     removeUnit,
     items = [],
+    generals = [],
+    changeGeneral,
 }) => {
     const handleRemoveWave = (
         e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -56,8 +62,19 @@ const AttackWave: FC<AttackWaveProp> = ({
         removeUnit(waveId, unitId, isBandits);
     };
 
+    const handleChangeGeneral = (generalId: string) => {
+        changeGeneral && changeGeneral(generalId, waveId);
+    };
+
     return (
         <div className="campContainer">
+            {!isBandits && generals.length && (
+                <AttackGeneral
+                    generalId={"12"}
+                    generals={generals}
+                    changeGeneral={handleChangeGeneral}
+                />
+            )}
             {isBandits ? "Obóz" : "Fala"}
             <div className="unitsContainer inputs60">
                 {Array.isArray(items) && items?.length

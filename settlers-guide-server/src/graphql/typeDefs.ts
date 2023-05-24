@@ -12,6 +12,15 @@ const typeDefs = `#graphql
   union UnitsResult = UnitsArray | EntityResult
   union UserResult = User | EntityResult
 
+  type Attack {
+    army: String!
+    opponents: String!
+    camp: Int!
+    garrison: Int!
+    id: Int
+    description: String
+  }
+
   type UnitsArray {
     units: [Unit!]
     bandits: [Unit!]
@@ -89,6 +98,7 @@ const typeDefs = `#graphql
     user: User
     image: Image
     generals: [General]
+    attacks: [Attack]
   }
 
   type General{
@@ -158,6 +168,15 @@ const typeDefs = `#graphql
       guideId: ID!
       description: String
       type: Int
+    ): SaveResult!
+    saveAttack(
+      attackId: ID
+      opponents: String!
+      army: String!
+      guideId: ID
+      camp: Int!
+      garrison: Int!
+      description: String
     ): SaveResult!
     changeGuideGeneral(generalId: ID!, guideId: ID!, checked: Boolean): SaveResult!
     joinItemImage(type: Int!, itemId: String!, imgId: String!): Boolean!

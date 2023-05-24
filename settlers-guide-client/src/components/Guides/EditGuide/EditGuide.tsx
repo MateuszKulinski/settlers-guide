@@ -14,6 +14,35 @@ import GeneralsListPart from "./parts/generals/GeneralsListPart";
 import GuideType from "../GuideType";
 import GuideDescription from "../GuideDescription";
 import AttackListPart from "./parts/attacks/AttacksListPart";
+import General from "../../../model/General";
+
+const GetMyGenerals = gql`
+    query General($withPublic: Boolean) {
+        getGenerals(withPublic: $withPublic) {
+            ... on EntityResult {
+                messages
+            }
+            ... on GeneralArray {
+                generals {
+                    name
+                    id
+                    generalType {
+                        id
+                        name
+                    }
+                    upgrades {
+                        level
+                        id
+                        upgradeType {
+                            name
+                            id
+                        }
+                    }
+                }
+            }
+        }
+    }
+`;
 
 const GetMyGuides = gql`
     query Guides($id: ID!) {
@@ -41,6 +70,14 @@ const GetMyGuides = gql`
                     generals {
                         id
                     }
+                    attacks {
+                        army
+                        camp
+                        garrison
+                        description
+                        id
+                        opponents
+                    }
                 }
             }
         }
@@ -53,10 +90,24 @@ const EditGuide: FC = () => {
         fetchPolicy: "no-cache",
         variables: { id: guideId },
     });
+    const { data: dataGenerals } = useQuery(GetMyGenerals, {
+        fetchPolicy: "no-cache",
+        variables: {
+            withPublic: true,
+        },
+    });
     const [guide, setGuide] = useState<Guide>();
+    const [generals, setGenerals] = useState<General[]>([]);
+
+    useEffect(() => {
+        if (dataGenerals && dataGenerals.getGenerals.generals) {
+            setGenerals(dataGenerals.getGenerals.generals);
+        }
+    }, [dataGenerals]);
 
     useEffect(() => {
         if (dataGuides && dataGuides.getGuides.guides) {
+            console.log(dataGuides.getGuides.guides[0]);
             setGuide(
                 dataGuides.getGuides.guides[0]
                     ? dataGuides.getGuides.guides[0]
@@ -100,10 +151,11 @@ const EditGuide: FC = () => {
 
                         <GeneralsListPart
                             guide={guide}
+                            generals={generals}
                             onUpdate={refetchGuide}
                         />
 
-                        <AttackListPart guide={guide} />
+                        <AttackListPart guide={guide} generals={generals} />
                     </Col>
                 </Col>
             )}

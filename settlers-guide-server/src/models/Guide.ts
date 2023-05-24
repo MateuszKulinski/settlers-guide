@@ -67,7 +67,7 @@ export class Guide extends Auditable {
     guidePoints: GuidePoints[];
 
     @OneToMany(() => GuideAttack, (guideAttack) => guideAttack.guide)
-    attacks: GuideAttack;
+    attacks: GuideAttack[];
 
     @ManyToOne(() => Adventure, (adventure) => adventure.guides)
     adventure: Adventure;

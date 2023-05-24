@@ -4,6 +4,61 @@ import { QueryArrayResult, QueryOneResult } from "../graphql/QueryArrayResult";
 import { Adventure } from "../models/Adventure";
 import { General } from "../models/General";
 import { Guide } from "../models/Guide";
+import { GuideAttack } from "../models/GuideAttack";
+
+export const saveAttack = async (
+    attackId: string,
+    opponentsJson: string,
+    armyJson: string,
+    guideId: string,
+    camp: number,
+    garrison: number,
+    description: string,
+    userId: string
+): Promise<QueryOneResult<boolean>> => {
+    let attack: GuideAttack | null;
+    const guide = await Guide.findOne({
+        where: {
+            id: guideId,
+            user: {
+                id: userId,
+            },
+        },
+    });
+
+    if (!guide)
+        return {
+            messages: ["Brak poradnika lub poradnik nie należy do Ciebie"],
+        };
+
+    if (attackId) {
+        console.log(attackId);
+        attack = await GuideAttack.findOne({
+            where: {
+                id: attackId,
+            },
+        });
+        if (!attack) return { messages: ["Nie znaleziono ataku"] };
+        attack.opponents = opponentsJson;
+        attack.army = armyJson;
+        attack.camp = camp;
+        attack.garrison = garrison;
+        attack.description = description;
+
+        attack.save();
+    } else {
+        attack = await GuideAttack.create({
+            army: armyJson,
+            opponents: opponentsJson,
+            camp,
+            garrison,
+            description,
+            guide,
+        }).save();
+    }
+    console.log(attack);
+    return { entity: true };
+};
 
 export const addGuide = async (
     userId: string,
@@ -67,6 +122,7 @@ export const getGuides = async (
               .leftJoinAndSelect("guide.adventure", "adventure")
               .leftJoinAndSelect("guide.image", "image")
               .leftJoinAndSelect("guide.generals", "general")
+              .leftJoinAndSelect("guide.attacks", "guideAttack")
               .leftJoin("guide.user", "user")
               .select([
                   "guide",
@@ -74,6 +130,7 @@ export const getGuides = async (
                   "user.userName",
                   "image",
                   "general",
+                  "guideAttack",
               ])
               .where({ user, id })
               .orderBy("guide.id", "ASC")
@@ -82,6 +139,7 @@ export const getGuides = async (
               .leftJoinAndSelect("guide.adventure", "adventure")
               .leftJoinAndSelect("guide.image", "image")
               .leftJoinAndSelect("guide.generals", "general")
+              .leftJoinAndSelect("guide.attacks", "guideAttack")
               .leftJoin("guide.user", "user")
               .select([
                   "guide",
@@ -89,6 +147,7 @@ export const getGuides = async (
                   "user.userName",
                   "image",
                   "general",
+                  "guideAttack",
               ])
               .where({ user })
               .orderBy("guide.id", "ASC")

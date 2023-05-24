@@ -26,6 +26,7 @@ import {
     addGuide,
     deleteGuide,
     getGuides,
+    saveAttack,
     saveGuide,
     saveGuideGeneral,
     // saveGuideGeneral,
@@ -313,6 +314,7 @@ const resolvers: IResolvers = {
 
                 guides = await getGuides(args.id, ctx.req.session!.userId);
                 if (guides.entities) {
+                    console.log(guides.entities[0]);
                     return {
                         guides: guides.entities,
                     };
@@ -428,6 +430,46 @@ const resolvers: IResolvers = {
         },
         //mutation general end
         //mutation guides start
+        saveAttack: async (
+            obj: any,
+            args: {
+                attackId: string;
+                opponents: string;
+                army: string;
+                guideId: string;
+                camp: number;
+                garrison: number;
+                description: string;
+            },
+            ctx: GqlContext,
+            info: any
+        ): Promise<{ data: boolean } | EntityResult> => {
+            try {
+                const userId = ctx.req.session!.userId;
+                const returnData = await saveAttack(
+                    args.attackId,
+                    args.opponents,
+                    args.army,
+                    args.guideId,
+                    args.camp,
+                    args.garrison,
+                    args.description,
+                    userId
+                );
+
+                if (returnData.entity) {
+                    return { data: returnData.entity };
+                }
+                return {
+                    messages: returnData.messages
+                        ? returnData.messages
+                        : [_STANDARD_ERROR_],
+                };
+            } catch (error) {
+                console.log(error.message);
+                throw error;
+            }
+        },
         addGuide: async (
             obj: any,
             args: {

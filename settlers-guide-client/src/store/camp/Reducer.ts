@@ -16,8 +16,13 @@ export const _REDUCER_ADD_UNITS_WAVE_ = "addUnitsWave";
 export const _REDUCER_REMOVE_UNITS_WAVE_ = "removeUnitsWave";
 export const _REDUCER_EDIT_UNITS_ = "editUnits";
 export const _REDUCER_REMOVE_UNITS_ = "removeUnits";
+export const _REDUCER_EDIT_GENERAL_ = "editGeneral";
 
 type CampAction =
+    | {
+          type: typeof _REDUCER_EDIT_GENERAL_;
+          payload: { waveId: string; generalId: string };
+      }
     | { type: typeof _REDUCER_ADD_BANDITS_WAVE_; payload: string }
     | { type: typeof _REDUCER_REMOVE_BANDITS_WAVE_; payload: string }
     | {
@@ -45,7 +50,22 @@ export const CampReducer = (state: CampState, action: CampAction) => {
 
     switch (action.type) {
         //general
+        case _REDUCER_EDIT_GENERAL_: {
+            const { waveId, generalId } = action.payload;
+            const updatedWaves = [...wavesUnits];
 
+            const waveIndex = updatedWaves.findIndex(
+                (wave: Wave) => wave.waveId === waveId
+            );
+            if (waveIndex === -1) {
+                return { ...state };
+            }
+
+            const currentWave = updatedWaves[waveIndex];
+            currentWave.generalId = generalId;
+            updatedWaves[waveIndex] = currentWave;
+            return { ...state, wavesUnits: [...updatedWaves] };
+        }
         //endgeneral
         //units
         case _REDUCER_ADD_UNITS_WAVE_: {

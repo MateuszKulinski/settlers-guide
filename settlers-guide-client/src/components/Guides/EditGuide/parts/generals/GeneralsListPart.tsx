@@ -7,55 +7,19 @@ import { _API_VERSION_, _SERVER_URL_ } from "../../../../../assets/consts";
 import { Guide } from "../../../../../model/Guide";
 import GeneralsListPartItem from "./GeneralsListPartItem";
 
-const GetMyGenerals = gql`
-    query General($withPublic: Boolean) {
-        getGenerals(withPublic: $withPublic) {
-            ... on EntityResult {
-                messages
-            }
-            ... on GeneralArray {
-                generals {
-                    name
-                    id
-                    generalType {
-                        id
-                        name
-                    }
-                    upgrades {
-                        level
-                        id
-                        upgradeType {
-                            name
-                            id
-                        }
-                    }
-                }
-            }
-        }
-    }
-`;
-
 interface GeneralsListPartProps {
     guide: Guide;
     onUpdate: () => void;
+    generals: General[];
 }
 
-const GeneralsListPart: FC<GeneralsListPartProps> = ({ guide, onUpdate }) => {
+const GeneralsListPart: FC<GeneralsListPartProps> = ({
+    guide,
+    generals,
+    onUpdate,
+}) => {
     const [show, setShow] = useState<boolean>(false);
-    const [generals, setGenerals] = useState<General[]>([]);
     const [content, setContent] = useState<React.ReactNode>(<Loader />);
-    const { data: dataGenerals } = useQuery(GetMyGenerals, {
-        fetchPolicy: "no-cache",
-        variables: {
-            withPublic: true,
-        },
-    });
-
-    useEffect(() => {
-        if (dataGenerals && dataGenerals.getGenerals.generals) {
-            setGenerals(dataGenerals.getGenerals.generals);
-        }
-    }, [dataGenerals]);
 
     useEffect(() => {
         const newContent = generals.map((general: General) => {
